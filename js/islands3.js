@@ -51,7 +51,7 @@
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); b.style.cssText = 'font-size:26px;padding:18px 50px'; els.opts.appendChild(b);
-          b.onclick = function () { exploded++; v += 6; ft = .6; flash.position.set(0, 0, sail.position.z + 3); els.note.textContent = exploded < 5 ? '第 ' + exploded + ' 级：光帆又快了一些。' : '第五级。探测器飞向了三体舰队的方向——上面只有一个人的大脑。'; if (exploded >= 5) { b.disabled = true; setTimeout(function () { finish(true); }, 3500); } };
+          b.onclick = function () { exploded++; v += 6; ft = .6; api.sfx('softboom'); flash.position.set(0, 0, sail.position.z + 3); els.note.textContent = exploded < 5 ? '第 ' + exploded + ' 级：光帆又快了一些。' : '第五级。探测器飞向了三体舰队的方向——上面只有一个人的大脑。'; if (exploded >= 5) { b.disabled = true; setTimeout(function () { finish(true); }, 3500); } };
         });
         await api.say(api.kid ? '后来出了意外，探测器飞歪了，谁也不知道它去了哪里。程心去冬眠，等着也许永远不会来的消息。' : '第四级核弹引爆后帆索断裂，探测器偏离航线失联。程心作为联络人进入冬眠——这一等，就是两百多年。');
       }
@@ -98,7 +98,7 @@
         var I = api.island.interact; var res = await api.interact(I.prompt, function (els, finish) {
           var big = document.createElement('div'); big.style.cssText = 'font-size:64px;font-family:"Courier New",monospace;color:#ff4b4b;text-shadow:0 0 18px #f00;margin:4px 0 10px'; big.textContent = '10.0'; els.body.appendChild(big); moving = true;
           var t0 = Date.now(), timer = setInterval(function () { var left = Math.max(0, 10 - (Date.now() - t0) / 1000); big.textContent = left.toFixed(1); if (left <= 0) { clearInterval(timer); decide(false, true); } }, 100);
-          function decide(press, timeout) { clearInterval(timer); els.opts.innerHTML = ''; pressed = press; els.note.textContent = press ? '你按下去了——引力波广播发出，三体与地球一起暴露。在书里，程心没有按。' : (timeout ? '时间到了。你没有按——程心也没有。' : '你没有按。程心也没有。') + ' 水滴撞毁了发射台，威慑结束了。'; var c = api.btn('继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(press ? '按下去' : '不按'); }; }
+          function decide(press, timeout) { clearInterval(timer); els.opts.innerHTML = ''; pressed = press; api.sfx(press ? 'sweep' : 'boom'); els.note.textContent = press ? '你按下去了——引力波广播发出，三体与地球一起暴露。在书里，程心没有按。' : (timeout ? '时间到了。你没有按——程心也没有。' : '你没有按。程心也没有。') + ' 水滴撞毁了发射台，威慑结束了。'; var c = api.btn('继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(press ? '按下去' : '不按'); }; }
           I.options.forEach(function (op, i) { var b = api.btn(op, i === 0); els.opts.appendChild(b); b.onclick = function () { decide(i === 0, false); }; });
         });
         this.result = res;
@@ -128,7 +128,7 @@
           var r = rangeInput(0, 100, 0); els.body.appendChild(r); var b = api.btn(api.island.interact.btn, true); b.disabled = true; els.opts.appendChild(b);
           els.note.textContent = '拖动滑块，像书里的人一样"从第四个方向"看它。';
           r.oninput = function () { k4 = r.value / 100; els.note.textContent = k4 < .3 ? '普通的立方体。' : k4 < .7 ? '边开始透明了……你看见了里面的东西。' : '里面、外面，同时看见——这就是四维空间里的三维物体。'; if (k4 > .9) b.disabled = false; };
-          b.onclick = function () { b.disabled = true; bc = true; els.note.textContent = '引力波天线启动。三体世界的坐标，传向全宇宙。'; setTimeout(function () { finish(true); }, 4200); };
+          b.onclick = function () { b.disabled = true; bc = true; api.sfx('sweep'); els.note.textContent = '引力波天线启动。三体世界的坐标，传向全宇宙。'; setTimeout(function () { finish(true); }, 4200); };
         });
         await api.say(api.kid ? '广播发出去了。三体人知道自己完了，他们的舰队开始逃跑。地球上的人，从澳大利亚回家了。' : '广播纪元开始。三体舰队放弃太阳系，人类从澳大利亚返回家园。但所有人都明白：地球的位置同样暴露了，打击迟早会来。');
       }
@@ -150,7 +150,7 @@
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); els.opts.appendChild(b);
-          b.onclick = function () { b.disabled = true; phase = 1; els.note.textContent = '一粒光粒，从宇宙深处来。'; setTimeout(function () { els.note.textContent = '三体的太阳爆发了。三体世界，没有了。'; }, 3000); setTimeout(function () { els.note.textContent = '智子对人类说：再见。你们的结局，不会比我们好多少。'; }, 6000); setTimeout(function () { finish(true); }, 9000); };
+          b.onclick = function () { b.disabled = true; phase = 1; setTimeout(function () { api.sfx('boom'); }, 2200); els.note.textContent = '一粒光粒，从宇宙深处来。'; setTimeout(function () { els.note.textContent = '三体的太阳爆发了。三体世界，没有了。'; }, 3000); setTimeout(function () { els.note.textContent = '智子对人类说：再见。你们的结局，不会比我们好多少。'; }, 6000); setTimeout(function () { finish(true); }, 9000); };
         });
         await api.say(api.kid ? '人类从这件事里学到了打击的样子：光粒打太阳。他们开始准备。可是——还有一个人要见程心。' : '人类第一次亲眼看见黑暗森林打击的形态，并据此准备掩体计划。与此同时，三体方面传来消息：有人要见程心。');
       }
@@ -249,7 +249,7 @@
           var song = ['🎵 我看见一粒尘埃，在黑暗里发着光——', '🎵 它喊出了自己的名字，又喊出了邻居的名字——', '🎵 那就睡吧，小尘埃，睡成一张薄薄的画。'];
           var b = api.btn(api.island.interact.btn, true); b.disabled = true; els.opts.appendChild(b);
           song.forEach(function (l, i) { setTimeout(function () { els.note.textContent = l; if (i === song.length - 1) { foil.visible = true; b.disabled = false; } }, 600 + i * 2600); });
-          b.onclick = function () { b.disabled = true; thrown = true; els.note.textContent = '纸片飘向那个发光的小点。歌者继续哼它的歌。'; setTimeout(function () { finish(true); }, 5200); };
+          b.onclick = function () { b.disabled = true; thrown = true; api.sfx('whoosh'); els.note.textContent = '纸片飘向那个发光的小点。歌者继续哼它的歌。'; setTimeout(function () { finish(true); }, 5200); };
         });
         await api.say(api.kid ? '没有人知道灾难已经在路上。太阳系里的人还在太空城里过着普通的日子。' : '二向箔以光速飞向太阳系。没有人知道它正在来。掩体纪元 67 年的太阳系，正在准备迎接又一个普通的早晨。');
       }
@@ -277,7 +277,7 @@
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); b.style.cssText = 'font-size:26px;padding:18px 50px'; els.opts.appendChild(b);
-          b.onclick = function () { b.disabled = true; phase = 1; els.note.textContent = '星环号出发了。'; setTimeout(function () { els.note.textContent = '回头看——太阳系正在变成一幅画。'; }, 2200); setTimeout(function () { els.note.textContent = '行星、太空城、太阳……全都在里面了。书里说，它像梵高的《星空》。'; }, 6500); setTimeout(function () { finish(true); }, 10500); };
+          b.onclick = function () { b.disabled = true; phase = 1; api.sfx('sweep'); setTimeout(function () { api.sfx('flatten'); }, 2200); els.note.textContent = '星环号出发了。'; setTimeout(function () { els.note.textContent = '回头看——太阳系正在变成一幅画。'; }, 2200); setTimeout(function () { els.note.textContent = '行星、太空城、太阳……全都在里面了。书里说，它像梵高的《星空》。'; }, 6500); setTimeout(function () { finish(true); }, 10500); };
         });
         await api.say(api.kid ? '星环号上只有两个人：程心和艾AA。她们要去的地方，是云天明送的那颗星。' : '星环号上只有程心和艾AA两个人，目的地是 286 光年外的 DX3906——云天明送的那颗星。太阳系的人类文明，留在了身后那幅画里。');
       }
@@ -355,7 +355,7 @@
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); els.opts.appendChild(b);
-          b.onclick = function () { b.disabled = true; ball.visible = true; placed = true; els.note.textContent = '一条小鱼，一点水，一点光。五公斤。'; setTimeout(function () { leaving = true; els.note.textContent = '他们走出了门。小宇宙的质量回到了大宇宙。'; }, 3000); setTimeout(function () { finish(true); }, 7500); };
+          b.onclick = function () { b.disabled = true; ball.visible = true; placed = true; api.sfx('resolve'); els.note.textContent = '一条小鱼，一点水，一点光。五公斤。'; setTimeout(function () { leaving = true; els.note.textContent = '他们走出了门。小宇宙的质量回到了大宇宙。'; }, 3000); setTimeout(function () { finish(true); }, 7500); };
         });
         await api.say(api.kid ? '故事讲完了。从清华园的一副眼镜，到一个小小的生态球——这就是《三体》。现在，去翻开书吧。' : '三部曲到此结束。从 1967 年清华园的一副眼镜，到时间之外的一个生态球。把字刻在石头上——然后，去读原著。');
       }

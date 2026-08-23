@@ -66,7 +66,7 @@ SM.Stage = (function () {
     return new Promise(function (res, rej) {
       var pop = $('cardPop'); pop.classList.remove('hidden'); pop.innerHTML = '';
       ids.forEach(function (id, i) { var d = document.createElement('div'); d.innerHTML = SM.State.cardHTML(id, false); var c = d.firstChild; c.style.animationDelay = (i * .15) + 's'; pop.appendChild(c); });
-      var okw = document.createElement('div'); okw.className = 'ok'; var ok = btn('收进地图册 ▶', true); okw.appendChild(ok); pop.appendChild(okw);
+      var okw = document.createElement('div'); okw.className = 'ok'; var ok = btn('收进地图册 ▶', true); okw.appendChild(ok); pop.appendChild(okw); if (SM.Audio) SM.Audio.sfx('card');
       SM.Narr.say(ids.length > 1 ? '你收到了' + ids.length + '张线索卡。' : '你收到了一张线索卡。', null);
       ok.onclick = function () { pop.classList.add('hidden'); if (g !== gen) rej(ABORT); else res(); };
     });
@@ -74,7 +74,7 @@ SM.Stage = (function () {
   function think(isl) {
     var g = gen;
     return new Promise(function (res, rej) {
-      var box = $('thinkBox'); box.classList.remove('hidden'); $('thinkQ').textContent = isl.think;
+      var box = $('thinkBox'); box.classList.remove('hidden'); $('thinkQ').textContent = isl.think; if (SM.Audio) SM.Audio.sfx('chime');
       $('thinkRef').textContent = SM.State.isKid() ? '' : isl.ref; $('thinkAns').value = SM.State.get().notes[isl.id] || '';
       $('thinkAns').style.display = SM.State.isKid() ? 'none' : '';
       function fin(note) { box.classList.add('hidden'); if (g !== gen) rej(ABORT); else res(note); }
@@ -91,7 +91,7 @@ SM.Stage = (function () {
     var idx = SM.ISLANDS.filter(function (i) { return i.book === isl.book; }).indexOf(isl);
     $('stN').textContent = (SM.BOOKS && SM.BOOKS.length > 1 ? SM.BOOKS[isl.book - 1].short + ' · ' : '') + (idx + 1); $('stTitle').textContent = isl.title; $('stYear').textContent = isl.year + ' · ' + SM.LINES[isl.line].name; $('stDot').style.background = SM.LINES[isl.line].css;
     $('stageUI').classList.remove('hidden'); hideSub(); $('interact').classList.add('hidden'); $('cardPop').classList.add('hidden'); $('thinkBox').classList.add('hidden');
-    var api = { scene: scene, camera: camera, H: H, say: say, hideSub: hideSub, interact: interact, btn: btn, wait: wait, tween: tween, isKid: SM.State.isKid, txt: SM.State.txt, island: isl, kid: SM.State.isKid() };
+    var api = { scene: scene, camera: camera, H: H, say: say, hideSub: hideSub, interact: interact, btn: btn, wait: wait, tween: tween, isKid: SM.State.isKid, txt: SM.State.txt, island: isl, kid: SM.State.isKid(), sfx: function (n) { if (SM.Audio) SM.Audio.sfx(n); } };
     var builder = SM.Islands[isl.id]; var inst = builder(api); active.inst = inst;
     $('exitBtn').onclick = function () { close(false); };
     (async function () {

@@ -164,7 +164,7 @@
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); b.style.fontSize = '26px'; b.style.padding = '18px 50px'; els.opts.appendChild(b);
-          b.onclick = function () { b.disabled = true; fired = true; els.note.textContent = '坐标飞向太阳……'; setTimeout(function () { els.note.textContent = '太阳把它放大，送向宇宙。现在，等一百多年。'; }, 2800); setTimeout(function () { finish(true); }, 5400); };
+          b.onclick = function () { b.disabled = true; fired = true; api.sfx('sweep'); els.note.textContent = '坐标飞向太阳……'; setTimeout(function () { els.note.textContent = '太阳把它放大，送向宇宙。现在，等一百多年。'; }, 2800); setTimeout(function () { finish(true); }, 5400); };
         });
         await api.say(api.kid ? '罗辑去冬眠了。他留下一句话：咒语应验的时候，叫醒我。' : '"如果那颗星出了事，就叫醒我。"——这是罗辑作为面壁者留下的全部遗言。然后他沉睡了一百八十五年。');
       }
@@ -192,7 +192,7 @@
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); b.style.fontSize = '26px'; els.opts.appendChild(b);
-          b.onclick = function () { b.disabled = true; rising = true; els.note.textContent = '电梯在上升……井壁上的灯一圈圈掠过。'; setTimeout(function () { els.note.textContent = '到地面了。这是危机纪元 205 年的城市：房子像叶子一样挂在大树上。'; }, 5200); setTimeout(function () { finish(true); }, 8200); };
+          b.onclick = function () { b.disabled = true; rising = true; api.sfx('whoosh'); els.note.textContent = '电梯在上升……井壁上的灯一圈圈掠过。'; setTimeout(function () { els.note.textContent = '到地面了。这是危机纪元 205 年的城市：房子像叶子一样挂在大树上。'; }, 5200); setTimeout(function () { finish(true); }, 8200); };
         });
         await api.say(api.kid ? '这里的人对罗辑很客气，但谁也不再把面壁者当回事。他们说：我们现在有两千艘战舰，三体人不够看。' : '人们告诉罗辑：面壁计划早已是历史笑话，人类舰队足以"在太阳系外迎击三体"。他听出来的只有一件事——没人再相信黑暗森林这种东西。');
       }
@@ -214,7 +214,7 @@
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); b.style.cssText = 'font-size:30px;padding:20px 56px;letter-spacing:.2em'; els.opts.appendChild(b);
-          b.onclick = function () { b.disabled = true; go = true; els.note.textContent = '"前进四。"——全舰所有人都被加速压进了深海状态。'; setTimeout(function () { els.note.textContent = '自然选择号脱离了舰队，向着太阳系外飞去。'; }, 3500); setTimeout(function () { finish(true); }, 6500); };
+          b.onclick = function () { b.disabled = true; go = true; api.sfx('sweep'); els.note.textContent = '"前进四。"——全舰所有人都被加速压进了深海状态。'; setTimeout(function () { els.note.textContent = '自然选择号脱离了舰队，向着太阳系外飞去。'; }, 3500); setTimeout(function () { finish(true); }, 6500); };
         });
         await api.say(api.kid ? '几艘飞船追了上去。可谁也没想到，真正的灾难马上就要在他们身后发生。' : '四艘战舰奉命追击。正是这次"叛逃"和追击，让这几艘船恰好远离了舰队——成为末日之战后仅存的人类火种。');
       }
@@ -246,7 +246,7 @@
           var r = rangeInput(0, 100, 0); els.body.appendChild(r); var b = api.btn(api.island.interact.btn, true); b.disabled = true; els.opts.appendChild(b);
           els.note.textContent = '拖动滑块，把放大镜推到最大。';
           r.oninput = function () { zoom = r.value / 100; els.note.textContent = zoom < .4 ? '表面像镜子一样。' : zoom < .8 ? '放大一百倍……还是一点痕迹也没有。' : '放到最大：绝对光滑。丁仪说：它根本不是"造"出来的，它是一个完整的东西。'; if (zoom > .95) b.disabled = false; };
-          b.onclick = function () { b.disabled = true; r.disabled = true; released = true; els.note.textContent = '水滴动了。'; setTimeout(function () { els.note.textContent = '它像一颗子弹，在舰队里穿来穿去。灯一盏盏灭掉。'; }, 3000); setTimeout(function () { els.note.textContent = '三十分钟。两千艘战舰。'; }, 7000); setTimeout(function () { finish(true); }, 9500); };
+          b.onclick = function () { b.disabled = true; r.disabled = true; released = true; api.sfx('boom'); els.note.textContent = '水滴动了。'; setTimeout(function () { els.note.textContent = '它像一颗子弹，在舰队里穿来穿去。灯一盏盏灭掉。'; }, 3000); setTimeout(function () { els.note.textContent = '三十分钟。两千艘战舰。'; }, 7000); setTimeout(function () { finish(true); }, 9500); };
         });
         await api.say(api.kid ? '人类一下子就输光了。而在远处，几艘逃出去的飞船收到了这个消息……' : '末日之战的幸存者只有几艘在边缘或已出逃的飞船。人类同时明白了两件事：三体的技术高到什么程度，以及，太阳系里再没有能打的力量。');
       }
@@ -292,7 +292,7 @@
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var r = rangeInput(-100, 100, -80); els.body.appendChild(r); var b = api.btn(api.island.interact.btn, true); b.disabled = true; els.opts.appendChild(b);
           r.oninput = function () { az = r.value / 100 * .9; var d = Math.abs(az - targetAz); if (d < .05 && !found) { found = true; b.disabled = false; els.note.textContent = '找到了：187J3X1，就在取景圈里。'; } else if (!found) els.note.textContent = d < .2 ? '很近了……' : '继续找。'; };
-          b.onclick = function () { b.disabled = true; r.disabled = true; gone = true; els.note.textContent = '它忽然亮了一下——然后，没有了。'; setTimeout(function () { els.note.textContent = '两百年前的咒语，应验了。'; }, 2500); setTimeout(function () { finish(true); }, 4500); };
+          b.onclick = function () { b.disabled = true; r.disabled = true; gone = true; api.sfx('softboom'); els.note.textContent = '它忽然亮了一下——然后，没有了。'; setTimeout(function () { els.note.textContent = '两百年前的咒语，应验了。'; }, 2500); setTimeout(function () { finish(true); }, 4500); };
         });
         await api.say(api.kid ? '人们赶紧把罗辑叫醒。可这时候，人类已经没有舰队了。' : '人类终于明白罗辑当年做了什么——一个无辜的恒星系因为一串坐标被毁灭。可理解来得太晚：舰队刚刚覆灭，水滴正朝着太阳飞去。');
       }
@@ -341,7 +341,7 @@
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;justify-content:center'; els.body.appendChild(wrap); var ok = api.btn(api.island.interact.btn, true); ok.disabled = true; els.opts.appendChild(ok);
           bombs.forEach(function (b, i) { var bt = api.btn('轨道 ' + (i + 1)); bt.className = 'bigbtn small'; wrap.appendChild(bt); bt.onclick = function () { if (b.visible) return; b.visible = true; bt.disabled = true; bt.style.opacity = .4; placed++; els.note.textContent = placed < N ? '已布下 ' + placed + ' / ' + N + ' 枚（书里是三千多枚）。' : '核弹链布好了。每一枚外面都裹着一层油膜。'; if (placed === N) ok.disabled = false; }; });
-          ok.onclick = function () { ok.disabled = true; filmOn = true; els.note.textContent = '一旦引爆，油膜散开——太阳就会对全宇宙喊出三体的名字。'; setTimeout(function () { finish(true); }, 3800); };
+          ok.onclick = function () { ok.disabled = true; filmOn = true; api.sfx('whoosh'); els.note.textContent = '一旦引爆，油膜散开——太阳就会对全宇宙喊出三体的名字。'; setTimeout(function () { finish(true); }, 3800); };
         });
         await api.say(api.kid ? '这套东西只有一个开关，握在罗辑手里。' : '三千多枚核弹、一个开关——黑暗森林威慑的全部硬件就这么多。剩下的，是一个人站出来的勇气。');
       }
@@ -365,7 +365,7 @@
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var hb = document.createElement('button'); hb.className = 'holdbtn'; hb.innerHTML = '<i></i><span>' + api.island.interact.btn + '</span>'; els.body.appendChild(hb); var fill = hb.querySelector('i'); var t0 = 0, timer = null, done = false;
-          function start(e) { e.preventDefault(); if (done) return; holding = true; t0 = Date.now(); timer = setInterval(function () { var k = Math.min(1, (Date.now() - t0) / 3000); fill.style.height = (k * 100) + '%'; els.note.textContent = k < 1 ? '握住…… ' + Math.ceil(3 - k * 3) + '（别松手）' : ''; if (k >= 1) { clearInterval(timer); done = true; yielded = true; els.note.textContent = '三体世界让步了。水滴掉头，舰队转向。威慑建立。'; setTimeout(function () { finish(true); }, 3600); } }, 50); }
+          function start(e) { e.preventDefault(); if (done) return; holding = true; t0 = Date.now(); timer = setInterval(function () { var k = Math.min(1, (Date.now() - t0) / 3000); fill.style.height = (k * 100) + '%'; els.note.textContent = k < 1 ? '握住…… ' + Math.ceil(3 - k * 3) + '（别松手）' : ''; if (k >= 1) { clearInterval(timer); done = true; yielded = true; api.sfx('resolve'); els.note.textContent = '三体世界让步了。水滴掉头，舰队转向。威慑建立。'; setTimeout(function () { finish(true); }, 3600); } }, 50); }
           function end() { if (done) return; holding = false; clearInterval(timer); fill.style.height = '0%'; els.note.textContent = '你松手了——在书里，松手就是同归于尽。再来一次：威慑就是一直握着。'; }
           hb.onmousedown = start; hb.ontouchstart = start; hb.onmouseup = end; hb.onmouseleave = end; hb.ontouchend = end;
         });

@@ -12,8 +12,10 @@
   /* ---------- 首页 ---------- */
   function showTitle() { $('title').classList.remove('hidden'); $('hud').classList.add('hidden'); SM.Narr.stop(); if (state.mode && SM.State.doneCount() > 0) { $('contRow').classList.remove('hidden'); $('contN').textContent = nextStationLabel(); } }
   function nextStationLabel() { var next = SM.ISLANDS.find(function (i) { return !SM.State.isDone(i.id); }); if (!next) return '终点'; var li = SM.ISLANDS.filter(function (i) { return i.book === next.book; }).indexOf(next); return SM.BOOKS[next.book - 1].short + '第 ' + (li + 1) + ' 站'; }
-  document.querySelectorAll('.modebtn').forEach(function (b) { b.onclick = function () { SM.Narr.warm(); SM.State.setMode(b.dataset.mode); start(false); }; });
-  $('contBtn').onclick = function () { SM.Narr.warm(); SM.State.setMode(state.mode); start(true); };
+  document.querySelectorAll('.modebtn').forEach(function (b) { b.onclick = function () { SM.Audio.init(); SM.Narr.warm(); SM.State.setMode(b.dataset.mode); start(false); }; });
+  $('contBtn').onclick = function () { SM.Audio.init(); SM.Narr.warm(); SM.State.setMode(state.mode); start(true); };
+  // 所有按钮统一点击音
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button'); if (b && SM.Audio.isReady()) SM.Audio.sfx('click'); }, true);
   $('resetBtn').onclick = function () { var b = $('resetBtn'); if (b.dataset.arm !== '1') { b.dataset.arm = '1'; b.textContent = '再点一次确认清空进度'; setTimeout(function () { b.dataset.arm = '0'; b.textContent = '重新开始'; }, 4000); return; } SM.State.reset(); state = SM.State.get(); b.textContent = '已清空'; $('contRow').classList.add('hidden'); document.body.classList.remove('kid'); };
   if (state.mode && SM.State.doneCount() > 0) { $('contRow').classList.remove('hidden'); $('contN').textContent = nextStationLabel(); }
   document.body.classList.toggle('kid', state.mode === 'kid');
@@ -25,7 +27,7 @@
     if (cont) { var next = SM.ISLANDS.find(function (i) { return !SM.State.isDone(i.id); }); SM.World.jumpTo(next ? next.u - 0.03 / NB : 1 - 0.05 / NB); }
     else SM.World.jumpTo(0.02 / NB);
     guideSay(SM.State.txt(SM.GUIDE.intro), true);
-    updateMute();
+    updateMute(); SM.Audio.setTheme(SM.BOOKS[SM.World.bookOf(SM.World.getT())].theme || 'stars', true);
   }
 
   /* ---------- HUD ---------- */
@@ -46,8 +48,8 @@
     var all = SM.State.bookDone(curBook);
     $('finishBtn').classList.toggle('hidden', !all); $('finishBtn').textContent = '生成《' + B.short + '》阅读地图';
   }
-  function guideSay(text, speak) { $('guideTxt').textContent = text; $('guide').style.opacity = 1; if (speak && !SM.Stage.isActive()) SM.Narr.say(text, null); clearTimeout(guideTimer); }
-  function updateMute() { $('muteBtn').textContent = SM.Narr.isMuted() ? '🔇 旁白关' : '🔊 旁白'; }
+  function guideSay(text, speak) { $('guideTxt').textContent = text; $('guide').style.opacity = 1; if (speak && !SM.Stage.isActive()) SM.Narr.say(text, null, { voice: 'guide' }); clearTimeout(guideTimer); }
+  function updateMute() { $('muteBtn').textContent = SM.Narr.isMuted() ? '🔇 旁白关' : '🔊 旁白'; $('sfxBtn').textContent = SM.Audio.isEnabled() ? '🎵 音效' : '🔕 音效关'; }
 
   /* 站点目录 / 快速旅行 */
   function renderDir() {
@@ -73,17 +75,19 @@
     $('dirBtn').onclick = function () { renderDir(); $('dir').classList.remove('hidden'); };
     $('dirClose').onclick = function () { $('dir').classList.add('hidden'); };
     $('muteBtn').onclick = function () { SM.Narr.setMuted(!SM.Narr.isMuted()); updateMute(); };
+    $('sfxBtn').onclick = function () { SM.Audio.setEnabled(!SM.Audio.isEnabled()); updateMute(); };
+    $('finishBtn').addEventListener('click', function () { SM.Audio.sfx('fanfare'); });
     $('modeBtn').onclick = function () { var m = SM.State.isKid() ? 'reader' : 'kid'; SM.State.setMode(m); guideSay(m === 'kid' ? '已切换到小学生模式：字少一点，讲慢一点。' : '已切换到读者模式：旁白更完整，每站附"想一想"。', true); };
     $('homeBtn').onclick = function () { showTitle(); };
     SM.World.onNear(function (isl) {
-      if (isl === nearIsl) return; nearIsl = isl;
-      $('enterBtn').classList.toggle('hidden', !isl);
+      if (isl === nearIsl) return; nearIsl = isl; SM.Audio.setNearFire(!!(isl && isl.book === 2));
+      $('enterBtn').classList.toggle('hidden', !isl); if (isl && !SM.State.isDone(isl.id)) SM.Audio.sfx('pop');
       if (isl) { $('stationNo').textContent = isl.localIndex + 1; $('stationTotal').textContent = SM.ISLANDS.filter(function (i) { return i.book === isl.book; }).length; $('stationName').textContent = isl.title; SM.State.setStation(SM.ISLANDS.indexOf(isl));
         guideSay((SM.State.isDone(isl.id) ? '这座岛你已经走过了，想再看一遍也可以。' : SM.GUIDE.nearIsland[isl.localIndex % SM.GUIDE.nearIsland.length]), false); }
     });
     SM.World.onLineChange(function (line) { if (SM.GUIDE.lineChange[line]) guideSay(SM.GUIDE.lineChange[line], true); });
     SM.World.onBookChange(function (b, prev) {
-      curBook = b + 1; buildProgress(curBook); updateProgress();
+      curBook = b + 1; buildProgress(curBook); updateProgress(); SM.Audio.setTheme(SM.BOOKS[b].theme || 'stars');
       if (prev !== null && prev >= 0) { var intro = SM.GUIDE['book' + curBook]; if (b > prev && intro) guideSay(SM.State.txt(intro) + (curBook === 3 && SM.State.isKid() && SM.GUIDE.kidWarn ? ' ' + SM.GUIDE.kidWarn : ''), true); else if (b < prev) guideSay('回到了' + SM.BOOKS[b].name + '。', false); }
     });
     window.addEventListener('keydown', function (e) { if (e.key === 'Enter' && nearIsl && !SM.Stage.isActive() && $('hud').offsetParent !== null && $('album').classList.contains('hidden') && $('summary').classList.contains('hidden') && $('dir').classList.contains('hidden')) enterIsland(nearIsl); });
@@ -91,11 +95,11 @@
 
   /* ---------- 进出岛 ---------- */
   function enterIsland(isl) {
-    SM.Narr.stop(); SM.World.setFrozen(true); $('hud').classList.add('hidden');
+    SM.Narr.stop(); SM.World.setFrozen(true); $('hud').classList.add('hidden'); SM.Audio.sfx('enter');
     $('fade').classList.add('on');
     setTimeout(function () {
       SM.Stage.open(isl, function (isl2, completed) {
-        $('fade').classList.add('on');
+        $('fade').classList.add('on'); SM.Audio.sfx('exit');
         setTimeout(function () {
           $('hud').classList.remove('hidden'); SM.World.setFrozen(false); updateProgress(); $('fade').classList.remove('on');
           var idx = SM.ISLANDS.indexOf(isl2);
@@ -110,7 +114,7 @@
   }
 
   /* ---------- 主循环 ---------- */
-  function step(dt) { if (!started) return; if (SM.Stage.isActive()) SM.Stage.update(dt); else SM.World.update(dt); }
+  function step(dt) { if (!started) return; SM.Audio.update(dt); if (SM.Stage.isActive()) SM.Stage.update(dt); else SM.World.update(dt); }
   function draw() { if (!started) return; if (SM.Stage.isActive()) SM.Stage.render(renderer); else SM.World.render(); }
   SM.step = step; SM.draw = draw;
   function loop() { requestAnimationFrame(loop); if (document.hidden) return; var now = performance.now(), dt = (now - lastT) / 1000; lastT = now; step(dt); draw(); }

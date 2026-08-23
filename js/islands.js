@@ -101,7 +101,7 @@ SM.Islands = {};
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); b.style.fontSize = '28px'; b.style.padding = '20px 60px'; els.opts.appendChild(b);
-          b.onclick = function () { b.disabled = true; fired = true; els.note.textContent = '电波飞向太阳……'; setTimeout(function () { els.note.textContent = '太阳把它放大了亿万倍，送向整个银河系。'; }, 2600); setTimeout(function () { finish(true); }, 5200); };
+          b.onclick = function () { b.disabled = true; fired = true; api.sfx('sweep'); els.note.textContent = '电波飞向太阳……'; setTimeout(function () { els.note.textContent = '太阳把它放大了亿万倍，送向整个银河系。'; }, 2600); setTimeout(function () { finish(true); }, 5200); };
         });
         await api.say(api.kid ? '信号飞走了。叶文洁不知道，八年后，会有人回答她。' : '信号以光速离开太阳系。四年后它抵达最近的恒星系；又过了四年，回音到达红岸。');
       }
@@ -133,7 +133,7 @@ SM.Islands = {};
           var cam = document.createElement('div'); cam.className = 'camera'; cam.innerHTML = '<div class="photo"></div><div class="num"></div><span style="color:#666">📷 取景器</span>'; els.body.appendChild(cam);
           var photo = cam.querySelector('.photo'), num = cam.querySelector('.num'); var shots = 0;
           var b = api.btn(api.island.interact.btn, true); els.opts.appendChild(b); var done = api.btn('继续 ▶', false); done.disabled = true; els.opts.appendChild(done);
-          b.onclick = function () { shots++; cnt -= 5 * 60 + 13; photo.classList.add('on'); num.textContent = fmt(cnt); num.classList.remove('on'); void num.offsetWidth; num.classList.add('on'); showing = true;
+          b.onclick = function () { shots++; cnt -= 5 * 60 + 13; api.sfx('tick'); photo.classList.add('on'); num.textContent = fmt(cnt); num.classList.remove('on'); void num.offsetWidth; num.classList.add('on'); showing = true;
             els.note.textContent = shots === 1 ? '照片上有一串数字……' : shots === 2 ? '又拍一张，数字变小了——它在倒数！' : '不管拍什么，数字都在。再过几天，它会出现在汪淼的眼睛里。';
             if (shots >= 2) done.disabled = false; };
           done.onclick = function () { finish(shots); };
@@ -214,8 +214,8 @@ SM.Islands = {};
           choices.push(choice);
           setPeople(choice === 'dehy');
           var msg = '';
-          if (ph.disaster === 'cold') { await skyTo(0x1a2a4a, 2); S.fog.color.set(0x1a2a4a); L.dir.intensity = .2; msg = choice === 'dehy' ? '极寒降临，大地冻成了冰。脱水的人们卷在仓库里，安然无恙。你判断对了！' : '极寒降临，大地冻成了冰。没有脱水的人们都冻住了……文明第' + civ + '号毁灭了。'; if (choice !== 'dehy') civ++; }
-          else if (ph.disaster === 'hot') { await skyTo(0xfff1d0, 2); S.fog.color.set(0xfff1d0); L.dir.intensity = 2; suns.forEach(function (s, i) { s.position.set(-40 + i * 40, 60, -120); }); glows.forEach(function (g, i) { g.position.copy(suns[i].position); g.scale.setScalar(2); }); msg = choice === 'dehy' ? '三日凌空！烈焰烤焦了大地。但脱水的人们躲在深深的地下仓库里，文明保住了！' : '三日凌空！烈焰烤焦了一切……文明第' + civ + '号在烈焰中毁灭。'; if (choice !== 'dehy') civ++; }
+          if (ph.disaster === 'cold') { api.sfx('softboom'); await skyTo(0x1a2a4a, 2); S.fog.color.set(0x1a2a4a); L.dir.intensity = .2; msg = choice === 'dehy' ? '极寒降临，大地冻成了冰。脱水的人们卷在仓库里，安然无恙。你判断对了！' : '极寒降临，大地冻成了冰。没有脱水的人们都冻住了……这一号文明毁灭了。'; if (choice !== 'dehy') civ++; }
+          else if (ph.disaster === 'hot') { api.sfx('boom'); await skyTo(0xfff1d0, 2); S.fog.color.set(0xfff1d0); L.dir.intensity = 2; suns.forEach(function (s, i) { s.position.set(-40 + i * 40, 60, -120); }); glows.forEach(function (g, i) { g.position.copy(suns[i].position); g.scale.setScalar(2); }); msg = choice === 'dehy' ? '三日凌空！烈焰烤焦了大地。但脱水的人们躲在深深的地下仓库里，文明保住了！' : '三日凌空！烈焰烤焦了一切……这一号文明在烈焰中毁灭。'; if (choice !== 'dehy') civ++; }
           else { msg = choice === 'dehy' ? '这其实是恒纪元——你脱水了，错过了一段发展的好时光。没关系，下一回合再看。' : '你判断对了！恒纪元里人们盖了新房子，文明前进了一步。'; }
           await api.say(msg, { label: '结果' });
           if (ph.disaster !== 'none') { await skyTo(0xd8b070, 1.5); S.fog.color.set(0xd8b070); L.dir.intensity = .9; suns.forEach(function (s, i) { s.position.set([60, -120, 140][i], [45, 70, 90][i], [-140, -180, -200][i]); }); glows.forEach(function (g, i) { g.position.copy(suns[i].position); g.scale.setScalar(1); }); }
@@ -279,7 +279,7 @@ SM.Islands = {};
       update: function (dt, t) { if (warning) { var bl = Math.sin(t * 6) > 0; draw(['不要回答！', '不要回答！', '不要回答！'], bl); red.intensity = bl ? 2.2 : 1.2; } },
       run: async function () {
         await api.say(api.kid ? '八年过去了。一个深夜，叶文洁一个人值班。屏幕忽然亮了。' : '1979年的一个深夜，叶文洁独自值班。沉寂了八年的接收系统，忽然亮了。', { label: '旁白' });
-        warning = true; await api.wait(1800);
+        warning = true; api.sfx('alarm'); await api.wait(1800);
         await api.say(api.txt(api.island.say)); api.hideSub();
         var res = await api.interact(api.island.interact.prompt, function (els, finish) {
           api.island.interact.options.forEach(function (op, i) { var b = api.btn(op, i === 0); els.opts.appendChild(b); b.onclick = function () { els.opts.innerHTML = ''; els.note.textContent = (i === 0 ? '你选择了回答。' : '你选择了沉默。') + ' 那么叶文洁呢？——她的答案，在下一座红岸岛上。'; var c = api.btn('继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(op); }; }; });
@@ -309,7 +309,7 @@ SM.Islands = {};
           var wrap = document.createElement('div'); wrap.className = 'sunbtns'; els.body.appendChild(wrap); var bs = [];
           var notes = ['一颗太阳升起来了。今天是个好天气。', '两颗太阳！大地开始发烫……', '三日凌空！！'];
           [0, 1, 2].forEach(function (i) { var b = api.btn('第' + ['一', '二', '三'][i] + '颗太阳'); wrap.appendChild(b); bs.push(b); b.onclick = function () { if (i !== up) return; up++; b.classList.add('on'); b.disabled = true; els.note.textContent = notes[i]; var s = suns[i], g = glows[i], y0 = s.position.y; api.tween(1.6, function (k) { s.position.y = y0 - 200 * k; g.position.y = s.position.y; }); skyColor(api, [0x7a9ac8, 0xe8c890, 0xfff6e0][i], 1.6); S.fog.color.set([0x7a9ac8, 0xe8c890, 0xfff6e0][i]); L.dir.intensity = .4 + i * .8; L.amb.intensity = .6 + i * .5;
-            if (i === 2) { setTimeout(function () { api.tween(1.2, function (k) { flash.material.opacity = k; }).then(function () { els.note.textContent = '三颗太阳排成了一条线——三日连珠。行星被巨大的引力撕开了！'; shake = 2.5; suns.forEach(function (s2, j) { s2.position.set(-30 + j * 30, 90, -220); glows[j].position.copy(s2.position); }); api.tween(2.5, function (k) { flash.material.opacity = 1 - k; gL.position.x = -50.5 - k * 40; gR.position.x = 50.5 + k * 40; gL.rotation.z = k * .25; gR.rotation.z = -k * .25; }).then(function () { var c = api.btn('继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(true); }; }); }); }, 1800); }
+            if (i === 2) { setTimeout(function () { api.sfx('boom'); api.tween(1.2, function (k) { flash.material.opacity = k; }).then(function () { els.note.textContent = '三颗太阳排成了一条线——三日连珠。行星被巨大的引力撕开了！'; shake = 2.5; suns.forEach(function (s2, j) { s2.position.set(-30 + j * 30, 90, -220); glows[j].position.copy(s2.position); }); api.tween(2.5, function (k) { flash.material.opacity = 1 - k; gL.position.x = -50.5 - k * 40; gR.position.x = 50.5 + k * 40; gL.rotation.z = k * .25; gR.rotation.z = -k * .25; }).then(function () { var c = api.btn('继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(true); }; }); }); }, 1800); }
           }; });
         });
         await api.say(api.kid ? '三颗太阳的世界，永远算不准明天。所以三体人决定：离开家园，去四光年外那颗蓝色的星球——地球。' : '三体问题无解，意味着这个文明的毁灭只是时间问题。于是三体世界做出决定：全体迁徙，目标是四光年外那颗气候温和、规律可期的蓝色行星。而此时，地球上有一个人已经发出了邀请。');
@@ -336,7 +336,7 @@ SM.Islands = {};
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var hb = document.createElement('button'); hb.className = 'holdbtn'; hb.innerHTML = '<i></i><span>' + api.island.interact.btn + '</span>'; els.body.appendChild(hb); var fill = hb.querySelector('i');
           var t0 = 0, timer = null, done = false;
-          function start(e) { e.preventDefault(); if (done) return; t0 = Date.now(); timer = setInterval(function () { var k = Math.min(1, (Date.now() - t0) / 3000); fill.style.height = (k * 100) + '%'; els.note.textContent = k < 1 ? '按住…… ' + Math.ceil(3 - k * 3) : ''; if (k >= 1) { clearInterval(timer); done = true; sent = true; skyColor(api, 0x3a0a0a, 3); els.note.textContent = '信号发出去了。没有回头路了。'; setTimeout(function () { finish(true); }, 3200); } }, 50); }
+          function start(e) { e.preventDefault(); if (done) return; t0 = Date.now(); timer = setInterval(function () { var k = Math.min(1, (Date.now() - t0) / 3000); fill.style.height = (k * 100) + '%'; els.note.textContent = k < 1 ? '按住…… ' + Math.ceil(3 - k * 3) : ''; if (k >= 1) { clearInterval(timer); done = true; sent = true; api.sfx('sweep'); skyColor(api, 0x3a0a0a, 3); els.note.textContent = '信号发出去了。没有回头路了。'; setTimeout(function () { finish(true); }, 3200); } }, 50); }
           function end() { if (done) return; clearInterval(timer); fill.style.height = '0%'; els.note.textContent = '松开了——这个决定，需要按满三秒。'; }
           hb.onmousedown = start; hb.ontouchstart = start; hb.onmouseup = end; hb.onmouseleave = end; hb.ontouchend = end;
         });
@@ -388,7 +388,7 @@ SM.Islands = {};
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var r = rangeInput(0, 100, 0); els.body.appendChild(r); var ok = api.btn(api.island.interact.btn, true); ok.disabled = true; els.opts.appendChild(ok);
           r.oninput = function () { var k = r.value / 100; wires.forEach(function (w) { w.scale.x = Math.max(.001, k); w.position.x = -30.5 + 30.5 * k; }); els.note.textContent = k < 1 ? '细丝在延伸……几乎看不见。' : '拉好了。五十根"飞刃"，像一架竖起来的古筝。'; ok.disabled = k < 1; };
-          ok.onclick = function () { ok.disabled = true; moving = true; els.note.textContent = '审判日号来了……'; setTimeout(function () { els.note.textContent = '船无声地穿过了琴弦。船上没有人来得及销毁任何东西。'; }, 7000); setTimeout(function () { finish(true); }, 10500); };
+          ok.onclick = function () { ok.disabled = true; moving = true; api.sfx('whoosh'); els.note.textContent = '审判日号来了……'; setTimeout(function () { els.note.textContent = '船无声地穿过了琴弦。船上没有人来得及销毁任何东西。'; }, 7000); setTimeout(function () { finish(true); }, 10500); };
         });
         await api.say(api.kid ? '人类拿到了三体人全部的秘密。但这些秘密，比所有人想的都可怕。' : '人类夺取了三体世界的全部信息。接下来要读到的内容，比战斗本身更令人绝望。');
       }
@@ -414,7 +414,7 @@ SM.Islands = {};
         await api.say(api.txt(api.island.say)); api.hideSub();
         await api.interact(api.island.interact.prompt, function (els, finish) {
           var b = api.btn(api.island.interact.btn, true); b.style.fontSize = '26px'; els.opts.appendChild(b);
-          b.onclick = function () { b.disabled = true; fly = true; els.note.textContent = '蝗虫飞起来了，遮住了半个天空。'; setTimeout(function () { els.note.textContent = '"虫子从来没有被战胜过。"'; }, 3500); setTimeout(function () { finish(true); }, 6000); };
+          b.onclick = function () { b.disabled = true; fly = true; api.sfx('flutter'); els.note.textContent = '蝗虫飞起来了，遮住了半个天空。'; setTimeout(function () { els.note.textContent = '"虫子从来没有被战胜过。"'; }, 3500); setTimeout(function () { finish(true); }, 6000); };
         });
         await api.say(api.kid ? '三条线在这里汇合，《三体》第一部的故事讲完了。人类知道了敌人是谁，也知道了：虫子，从来没有被战胜过。' : '《三体》第一部在这里结束。人类知道了敌人是谁、何时到来、用什么方式锁死了我们。而真正的回答——人类将如何面对——留给了第二部《黑暗森林》。');
       }

@@ -23,7 +23,8 @@
 - 纯前端，**零外网依赖**：`three.min.js` 为 r128 UMD 版（全局 `THREE`），本地引入；原生 JS，不用框架、不用 ES module、不用打包器。
 - 所有代码挂在全局命名空间 `SM` 下（`SM.World / SM.Stage / SM.Islands / SM.State / SM.Narr / SM.Summary`），脚本按 `index.html` 里的顺序加载。
 - 全中文界面；键鼠为主（↑/W 前进、↓/S 后退、点击河面行走、回车进入岛），按钮也支持触摸。
-- 旁白用浏览器 `speechSynthesis`（离线中文语音），无语音或静音时按字数估时自动推进。
+- 旁白：**预生成的神经网络人声**（`audio/*.mp3`，索引 `audio/manifest.js`，键 = 声线_文本哈希）。三条声线：读者旁白=云健（男）、小学生旁白=晓晓（女）、向导小智子=晓伊。`SM.Narr.say(text)` 按文本哈希查索引播放；找不到才退回浏览器 `speechSynthesis`。**改了任何旁白/向导文案后**：`node tools/extract_lines.js && python3 tools/gen_audio.py`（只生成新增/变化的句子；需联网，用 edge-tts）。想换**真人录音**：按 `tools/录音脚本.md` 的文件名录好放进 `audio/` 覆盖即可（`python3 tools/make_script.py` 重新生成脚本）。
+- 音效：`js/audio.js` 用 WebAudio 实时合成（零素材）：按河段的环境声（星河叮声/森林风与虫鸣与篝火/太空低鸣与回声）+ 生成式和声垫（13 秒换一个和弦）+ 动效音（`SM.Audio.sfx('enter|exit|card|chime|fanfare|sweep|boom|softboom|alarm|tick|whoosh|flatten|resolve|flutter|pop|click')`）。旁白播放时音乐自动压低（duck）。首页点模式按钮时 `init()`（浏览器要求用户手势）。岛内用 `api.sfx(name)`。
 - 进度、卡片、选择、笔记存 `localStorage`（key `sm_state_v1`）；不可用时退回内存（沙箱/file:// 兼容）。
 - 风格：低多边形写意，靠光照和色温讲故事；UI 大字、大按钮、适合投屏。
 
@@ -34,7 +35,10 @@
 | `css/style.css` | 全部样式；`body.kid` 下字号更大 | 视觉调整 |
 | `js/data.js` | 第一部内容：三条线、24 张线索卡、13 座岛（旁白 kid/reader、互动配置、卡片、想一想、原著章节）、小智子台词 | 改第一部文案 |
 | `js/data2.js` | 第二部内容 + **三部曲结构**：`SM.BOOKS`（每部的线、主题、门）、`SM.ERAS`（纪元之门）、`SM.TUNNELS`（冬眠隧道）、26 张卡、14 座岛 | 改第二部文案；加第三部时新建 data3.js 并 push 进 BOOKS |
-| `js/narration.js` | 旁白（语音合成 + 字幕节奏 + 静音） | 语音策略 |
+| `js/narration.js` | 旁白：查 manifest 播人声 mp3，失败退回语音合成；duck 音乐 | 语音策略 |
+| `js/audio.js` | WebAudio 音效引擎：环境声、音乐垫、动效音 | 加音效/改氛围 |
+| `audio/` | 262 条人声 mp3 + `manifest.js`（由 tools 生成） | 改文案后重生成 |
+| `tools/` | `extract_lines.js` 抽取全部朗读文本 → `lines.json`；`gen_audio.py` 生成人声；`make_script.py` 生成真人录音脚本 | 文案变动后 |
 | `js/state.js` | 进度/卡片/选择/笔记存取；地图册渲染 | 存档结构 |
 | `js/world.js` | 星河世界：主河道曲线、三色交织河道、13 岛微缩景观（`diorama()`）、黑暗森林之门、玩家/向导、相机、点击行走、自动停靠 | 世界/岛外观 |
 | `js/stage.js` | 岛内舞台引擎：独立场景、`say/interact/showCards/think` 流程 API、补间、几何小工具 `H` | 流程机制 |
@@ -60,7 +64,7 @@ python3 -m http.server 8975 --directory .     # 然后打开 http://localhost:89
 ```bash
 python3 build.py          # 产出 dist/三体阅读地图.html（双击即玩）和 dist/artifact.html
 ```
-- 单文件版可直接微信/AirDrop 发人，file:// 打开即可，不需要服务器。
+- 单文件版（约 32MB，人声原始音质内嵌）可直接微信/AirDrop 发人，file:// 打开即可；Artifact 版人声转码到 20kbps 以满足 16MB 上限。
 - Artifact（同一 Claude 账号登录即可玩，私有）：https://claude.ai/code/artifact/5e48786d-7e5e-4c13-8e58-f14a0372432f
   更新方法：在 Claude Code 里用 Artifact 工具、传 `url` 为上面地址、文件为 `dist/artifact.html` 重新发布即可保持同一链接。
 - 源码仓库：GitHub 私有仓库 `wangshiyun404/santi-map`（见 README）。
