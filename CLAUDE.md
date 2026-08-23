@@ -60,6 +60,13 @@ python3 -m http.server 8975 --directory .     # 然后打开 http://localhost:89
   `main.js` 已有定时器追赶兜底；做自动化测试/截图时用 `SM.step(1/30)` 手动推帧 + `SM.draw()` 强制渲染，并且每隔几分钟刷新页面重置节流。
 - 13 岛自动化冒烟脚本的思路：定时轮询 DOM——字幕可见就点"继续"，互动面板可见就按站点执行动作，卡片/想一想可见就点确认；所有岛均已跑通。
 
+## 5b. 发布前检查清单（每次改动后）
+1. 改了任何朗读文案 → `node tools/extract_lines.js && python3 tools/gen_audio.py && node tools/audio_check.js`（最后一步必须输出 missing 0）。
+2. `python3 build.py`（dist 的构建时间必须晚于 js 的最后修改时间——第三方审核曾抓到"线上还是旧代码"）。
+3. 本地 http 跑一遍 `tools/drive.js`（注入后 `__runAll()`），看 `__miss` 为空、`__errs` 为空。
+4. 提交推送；Artifact 用同一 url 重新发布；`~/Downloads/三体阅读地图.html` 同步。
+声音系统的第三方审核报告在 `tools/audio_review.md`（M1–M7 均已修复，见 PROGRESS.md）。
+
 ## 6. 构建与分享
 ```bash
 python3 build.py          # 产出 dist/三体阅读地图.html（双击即玩）和 dist/artifact.html

@@ -351,7 +351,10 @@ SM.World = (function () {
   function render() { renderer.render(scene, camera); }
   function resize() { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); }
   function travelTo(u) { targetT = Math.max(TMIN, Math.min(TMAX, u)); }
-  function jumpTo(u) { playerT = targetT = Math.max(TMIN, Math.min(TMAX, u)); var p = posOn(playerT, 0, 0), t = tanAt(playerT); camPos.copy(p).addScaledVector(t, -13).setY(8); camLook.copy(p); }
+  function jumpTo(u) { playerT = targetT = Math.max(TMIN, Math.min(TMAX, u)); var p = posOn(playerT, 0, 0), t = tanAt(playerT); camPos.copy(p).addScaledVector(t, -13).setY(8); camLook.copy(p);
+    // 传送不算"河变色/进入新的一部"：把当前线与部直接同步到落点，避免 onLineChange/onBookChange 掐断开场白
+    var ahead = islands.filter(function (i) { return i.u >= playerT - 0.012 / NB; })[0]; curLine = ahead ? ahead.line : 'merge'; curBook = bookOf(playerT);
+    if (onBookChange) onBookChange(curBook, null); }
 
   return { init: init, update: update, render: render, resize: resize, travelTo: travelTo, jumpTo: jumpTo,
     setHold: function (d) { holdDir = d; }, setFrozen: function (f) { frozen = f; keys = {}; holdDir = 0; }, onNear: function (f) { onNear = f; }, onLineChange: function (f) { onLineChange = f; }, onBookChange: function (f) { onBookChange = f; },

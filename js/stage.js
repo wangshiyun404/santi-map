@@ -38,11 +38,12 @@ SM.Stage = (function () {
     var g = gen; opt = opt || {};
     return new Promise(function (res, rej) {
       var box = $('subtitle'); box.classList.remove('hidden'); $('subTxt').textContent = text; $('subL').textContent = opt.label || '旁白';
-      var done = false;
-      function finish() { if (done) return; done = true; SM.Narr.stop(); $('nextBtn').onclick = null; $('replayBtn').onclick = null; if (g !== gen) rej(ABORT); else res(); }
+      var done = false, holdT = null;
+      function finish() { if (done) return; done = true; if (holdT) clearTimeout(holdT); if (g !== gen) { rej(ABORT); return; } SM.Narr.stop(); $('nextBtn').onclick = null; $('replayBtn').onclick = null; res(); }
+      var onEnd = function () { if (holdT) clearTimeout(holdT); holdT = setTimeout(finish, opt.hold || 900); };
       $('nextBtn').onclick = finish;
-      $('replayBtn').onclick = function () { SM.Narr.say(text, function () { setTimeout(finish, 700); }); };
-      SM.Narr.say(text, function () { setTimeout(finish, opt.hold || 900); });
+      $('replayBtn').onclick = function () { if (done) return; if (holdT) { clearTimeout(holdT); holdT = null; } SM.Narr.say(text, onEnd); };
+      SM.Narr.say(text, onEnd);
     });
   }
   function hideSub() { $('subtitle').classList.add('hidden'); }
@@ -52,10 +53,11 @@ SM.Stage = (function () {
     var g = gen;
     return new Promise(function (res, rej) {
       var box = $('interact'); box.classList.remove('hidden');
-      var els = { prompt: $('intPrompt'), body: $('intBody'), note: $('intNote'), opts: $('intOpts') };
-      els.prompt.textContent = prompt; els.body.innerHTML = ''; els.note.textContent = ''; els.opts.innerHTML = '';
+      box.innerHTML = '<div class="prompt" id="intPrompt"></div><div class="body" id="intBody"></div><div class="note" id="intNote"></div><div class="opts" id="intOpts"></div>';
+      var els = { prompt: box.children[0], body: box.children[1], note: box.children[2], opts: box.children[3] };
+      els.prompt.textContent = prompt;
       var done = false;
-      function finish(result) { if (done) return; done = true; box.classList.add('hidden'); if (g !== gen) rej(ABORT); else res(result); }
+      function finish(result) { if (done) return; done = true; if (g !== gen) { rej(ABORT); return; } box.classList.add('hidden'); res(result); }
       setup(els, finish);
     });
   }
@@ -91,9 +93,10 @@ SM.Stage = (function () {
     var idx = SM.ISLANDS.filter(function (i) { return i.book === isl.book; }).indexOf(isl);
     $('stN').textContent = (SM.BOOKS && SM.BOOKS.length > 1 ? SM.BOOKS[isl.book - 1].short + ' · ' : '') + (idx + 1); $('stTitle').textContent = isl.title; $('stYear').textContent = isl.year + ' · ' + SM.LINES[isl.line].name; $('stDot').style.background = SM.LINES[isl.line].css;
     $('stageUI').classList.remove('hidden'); hideSub(); $('interact').classList.add('hidden'); $('cardPop').classList.add('hidden'); $('thinkBox').classList.add('hidden');
-    var api = { scene: scene, camera: camera, H: H, say: say, hideSub: hideSub, interact: interact, btn: btn, wait: wait, tween: tween, isKid: SM.State.isKid, txt: SM.State.txt, island: isl, kid: SM.State.isKid(), sfx: function (n) { if (SM.Audio) SM.Audio.sfx(n); } };
+    var api = { scene: scene, camera: camera, H: H, say: say, hideSub: hideSub, interact: interact, btn: btn, wait: wait, tween: tween, isKid: SM.State.isKid, txt: SM.State.txt, island: isl, kid: SM.State.isKid(), sfx: function (n) { if (g === gen && SM.Audio) SM.Audio.sfx(n); } };
     var builder = SM.Islands[isl.id]; var inst = builder(api); active.inst = inst;
     $('exitBtn').onclick = function () { close(false); };
+    var mb = $('stMute'); if (mb) { mb.textContent = SM.Narr.isMuted() ? '🔇 旁白关' : '🔊 旁白'; mb.onclick = function () { SM.Narr.setMuted(!SM.Narr.isMuted()); mb.textContent = SM.Narr.isMuted() ? '🔇 旁白关' : '🔊 旁白'; if (SM.updateMute) SM.updateMute(); }; }
     (async function () {
       try {
         await inst.run();
@@ -108,7 +111,7 @@ SM.Stage = (function () {
     })();
   }
   function close(completed) {
-    gen++; SM.Narr.stop(); $('stageUI').classList.add('hidden'); hideSub();
+    gen++; tweens = []; SM.Narr.stop(); $('stageUI').classList.add('hidden'); hideSub(); $('interact').classList.add('hidden');
     var cb = onClose; onClose = null; var isl = active; active = null;
     if (scene) { scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); }); scene = null; }
     if (cb) cb(isl, completed);

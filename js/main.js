@@ -6,16 +6,16 @@
   var renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.setSize(window.innerWidth, window.innerHeight);
   SM.Stage.setRenderer(renderer);
-  var started = false, nearIsl = null, lastT = performance.now(), guideTimer = null, curBook = 1;
-  var state = SM.State.get(); var NB = SM.BOOKS.length;
+  var started = false, nearIsl = null, lastT = performance.now(), curBook = 1, guideQ = [];
+  var state = SM.State.get(); var NB = SM.BOOKS.length; var started2 = false;
 
   /* ---------- 首页 ---------- */
-  function showTitle() { $('title').classList.remove('hidden'); $('hud').classList.add('hidden'); SM.Narr.stop(); if (state.mode && SM.State.doneCount() > 0) { $('contRow').classList.remove('hidden'); $('contN').textContent = nextStationLabel(); } }
+  function showTitle() { $('title').classList.remove('hidden'); $('hud').classList.add('hidden'); SM.Narr.stop(); guideQ = []; SM.Audio.duck(true); if (state.mode && SM.State.doneCount() > 0) { $('contRow').classList.remove('hidden'); $('contN').textContent = nextStationLabel(); } }
   function nextStationLabel() { var next = SM.ISLANDS.find(function (i) { return !SM.State.isDone(i.id); }); if (!next) return '终点'; var li = SM.ISLANDS.filter(function (i) { return i.book === next.book; }).indexOf(next); return SM.BOOKS[next.book - 1].short + '第 ' + (li + 1) + ' 站'; }
   document.querySelectorAll('.modebtn').forEach(function (b) { b.onclick = function () { SM.Audio.init(); SM.Narr.warm(); SM.State.setMode(b.dataset.mode); start(false); }; });
   $('contBtn').onclick = function () { SM.Audio.init(); SM.Narr.warm(); SM.State.setMode(state.mode); start(true); };
   // 所有按钮统一点击音
-  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button'); if (b && SM.Audio.isReady()) SM.Audio.sfx('click'); }, true);
+  document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button'); if (b && SM.Audio.isReady() && !b.classList.contains('holdbtn') && b.id !== 'nextBtn' && b.id !== 'replayBtn') SM.Audio.sfx('click'); }, true);
   $('resetBtn').onclick = function () { var b = $('resetBtn'); if (b.dataset.arm !== '1') { b.dataset.arm = '1'; b.textContent = '再点一次确认清空进度'; setTimeout(function () { b.dataset.arm = '0'; b.textContent = '重新开始'; }, 4000); return; } SM.State.reset(); state = SM.State.get(); b.textContent = '已清空'; $('contRow').classList.add('hidden'); document.body.classList.remove('kid'); };
   if (state.mode && SM.State.doneCount() > 0) { $('contRow').classList.remove('hidden'); $('contN').textContent = nextStationLabel(); }
   document.body.classList.toggle('kid', state.mode === 'kid');
@@ -26,7 +26,8 @@
     curBook = 1; buildProgress(1); updateProgress();
     if (cont) { var next = SM.ISLANDS.find(function (i) { return !SM.State.isDone(i.id); }); SM.World.jumpTo(next ? next.u - 0.03 / NB : 1 - 0.05 / NB); }
     else SM.World.jumpTo(0.02 / NB);
-    guideSay(SM.State.txt(SM.GUIDE.intro), true);
+    guideQ = []; SM.Audio.duck(false);
+    if (SM.State.doneCount() === 0 && !started2) guideSay(SM.State.txt(SM.GUIDE.intro), true); else guideSay(SM.GUIDE.welcomeBack || '欢迎回来。沿着河继续往前走吧。', true); started2 = true;
     updateMute(); SM.Audio.setTheme(SM.BOOKS[SM.World.bookOf(SM.World.getT())].theme || 'stars', true);
   }
 
@@ -48,8 +49,15 @@
     var all = SM.State.bookDone(curBook);
     $('finishBtn').classList.toggle('hidden', !all); $('finishBtn').textContent = '生成《' + B.short + '》阅读地图';
   }
-  function guideSay(text, speak) { $('guideTxt').textContent = text; $('guide').style.opacity = 1; if (speak && !SM.Stage.isActive()) SM.Narr.say(text, null, { voice: 'guide' }); clearTimeout(guideTimer); }
+  /* 向导说话：如果向导正在说上一句，新句排队（最多 2 条）而不是掐断；岛内不说 */
+  function guideSay(text, speak) {
+    $('guideTxt').textContent = text; $('guide').style.opacity = 1; if (!speak || SM.Stage.isActive()) return;
+    if (SM.Narr.isSpeaking() && SM.Narr.currentVoice() === 'guide') { guideQ.push(text); if (guideQ.length > 2) guideQ.shift(); return; }
+    speakGuide(text);
+  }
+  function speakGuide(text) { SM.Narr.say(text, function () { var nx = guideQ.shift(); if (nx && !SM.Stage.isActive()) { $('guideTxt').textContent = nx; speakGuide(nx); } }, { voice: 'guide' }); }
   function updateMute() { $('muteBtn').textContent = SM.Narr.isMuted() ? '🔇 旁白关' : '🔊 旁白'; $('sfxBtn').textContent = SM.Audio.isEnabled() ? '🎵 音效' : '🔕 音效关'; }
+  SM.updateMute = updateMute;
 
   /* 站点目录 / 快速旅行 */
   function renderDir() {

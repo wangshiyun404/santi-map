@@ -74,7 +74,7 @@ button { font-family:inherit; cursor:pointer; }
 #stageTitle .n, #stageTitle .y { text-shadow:0 1px 6px rgba(0,0,0,.8); color:#dfe4ff; }
 #stageTitle h3 i { display:inline-block; width:14px; height:14px; border-radius:50%; margin-right:10px; vertical-align:middle; }
 #stageTitle .y { font-size:14px; color:var(--muted); margin-top:4px; }
-#exitBtn { position:absolute; top:24px; right:24px; }
+#stTools { position:absolute; top:24px; right:24px; display:flex; gap:8px; }
 
 #subtitle { position:absolute; left:50%; bottom:40px; transform:translateX(-50%); width:min(960px,88vw); background:var(--panel); border:1px solid var(--panel-line);
   border-radius:18px; padding:20px 28px 16px; backdrop-filter:blur(8px); }

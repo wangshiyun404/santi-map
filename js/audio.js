@@ -1,7 +1,7 @@
 /* 音效引擎：WebAudio 实时合成——分河段的环境声 + 生成式音乐垫 + 动效音。零素材、零外网。
  * SM.Audio.init() 需在用户首次点击后调用；setTheme('stars'|'forest'|'space')；sfx(name)；duck(on) 给旁白让路 */
 SM.Audio = (function () {
-  var ctx = null, master, duckG, musicBus, ambBus, sfxBus, ready = false, theme = null;
+  var ctx = null, master, duckG, musicBus, ambBus, sfxBus, voiceBus, ready = false, theme = null;
   var enabled = (function () { try { return localStorage.getItem('sm_sfx') !== '0'; } catch (e) { return true; } })();
   var noiseBuf = null, layers = {}, pad = null, sched = { next: 0 }, chordIdx = 0, chordT = 0;
   var THEMES = {
@@ -20,7 +20,8 @@ SM.Audio = (function () {
   function init() {
     if (ready) { if (ctx.state === 'suspended') ctx.resume(); return; }
     try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
-    master = gain(enabled ? .9 : 0, ctx.destination); duckG = gain(1, master); musicBus = gain(.5, duckG); ambBus = gain(.7, duckG); sfxBus = gain(.8, master);
+    var limiter = ctx.createDynamicsCompressor(); limiter.threshold.value = -12; limiter.knee.value = 6; limiter.ratio.value = 8; limiter.attack.value = .003; limiter.release.value = .25; limiter.connect(ctx.destination);
+    master = gain(enabled ? .9 : 0, limiter); duckG = gain(1, master); musicBus = gain(.5, duckG); ambBus = gain(.7, duckG); sfxBus = gain(.8, master); voiceBus = gain(1, ctx.destination);
     // 和声垫：三个振荡器 → 低通 → 增益
     pad = { oscs: [], filt: ctx.createBiquadFilter(), g: gain(0, musicBus) }; pad.filt.type = 'lowpass'; pad.filt.frequency.value = 600; pad.filt.Q.value = .6; pad.filt.connect(pad.g);
     for (var i = 0; i < 4; i++) { var o = ctx.createOscillator(); o.type = i % 2 ? 'triangle' : 'sawtooth'; var og = gain(i % 2 ? .5 : .18, pad.filt); o.detune.value = (i - 1.5) * 6; o.frequency.value = 110; o.start(); pad.oscs.push({ o: o, g: og }); }
@@ -32,12 +33,15 @@ SM.Audio = (function () {
     // 低频嗡鸣（太空）
     var so = ctx.createOscillator(); so.type = 'sine'; so.frequency.value = 41; var so2 = ctx.createOscillator(); so2.type = 'sine'; so2.frequency.value = 41.6; var sg = gain(0, ambBus); so.connect(sg); so2.connect(sg); so.start(); so2.start(); layers.sub = { g: sg, o: so, o2: so2 };
     ready = true; if (theme) setTheme(theme, true);
+    var resume = function () { if (ctx && ctx.state !== 'running') { try { ctx.resume(); } catch (e) {} } };
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) resume(); }); document.addEventListener('pointerdown', resume, true); document.addEventListener('keydown', resume, true);
   }
 
   function setTheme(name, instant) {
     theme = name; if (!ready) return; var T = THEMES[name] || THEMES.stars; var t = now(), tc = instant ? .01 : 3;
     pad.filt.frequency.setTargetAtTime(T.padCut, t, tc); pad.g.gain.setTargetAtTime(T.padGain, t, tc);
-    layers.wind.f.type = T.wind.type; layers.wind.f.frequency.setTargetAtTime(T.wind.f, t, tc); layers.wind.f.Q.setTargetAtTime(T.wind.q, t, tc); layers.wind.g.gain.setTargetAtTime(T.wind.g, t, tc);
+    if (layers.wind.f.type !== T.wind.type) { layers.wind.g.gain.setTargetAtTime(0, t, .05); setTimeout(function () { layers.wind.f.type = T.wind.type; }, 200); }
+    layers.wind.f.frequency.setTargetAtTime(T.wind.f, t, tc); layers.wind.f.Q.setTargetAtTime(T.wind.q, t, tc); layers.wind.g.gain.setTargetAtTime(T.wind.g, t, tc);
     layers.sub.g.gain.setTargetAtTime(T.sub.g, t, tc); if (T.sub.f) { layers.sub.o.frequency.setTargetAtTime(T.sub.f, t, tc); layers.sub.o2.frequency.setTargetAtTime(T.sub.f + .6, t, tc); }
     chordIdx = 0; chordT = 0; applyChord(T, instant ? .05 : 4);
   }
@@ -57,7 +61,7 @@ SM.Audio = (function () {
   function crackle() { var s = noise(); var f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1800 + Math.random() * 2500; f.Q.value = 1; var g = gain(0, ambBus); s.connect(f); f.connect(g); var t = now(); env(g, t, .003, .03 + Math.random() * .03, .02, .005, .05); s.start(t); s.stop(t + .12); }
   var nearFire = false;
   function update(dt) {
-    if (!ready || !enabled) return; var T = THEMES[theme] || THEMES.stars; var t = now();
+    if (!ready || !enabled) return; if (ctx.state !== 'running') return; var T = THEMES[theme] || THEMES.stars; var t = now();
     chordT += dt; if (chordT > 13) { chordT = 0; chordIdx++; applyChord(T, 2.5); }
     if (t > sched.next) { sched.next = t + (Math.random() * T.pings.rate + T.pings.rate * .4); ping(T); }
     if (T.crickets && Math.random() < dt * 1.4) cricket();
@@ -67,7 +71,7 @@ SM.Audio = (function () {
 
   /* ---- 动效音 ---- */
   var SFX = {
-    click: function (t) { var o = ctx.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(1100, t); o.frequency.exponentialRampToValueAtTime(700, t + .05); var g = gain(0, sfxBus); o.connect(g); env(g, t, .003, .18, .03, .02, .06); o.start(t); o.stop(t + .12); },
+    click: function (t) { var o = ctx.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(1100, t); o.frequency.exponentialRampToValueAtTime(700, t + .05); var g = gain(0, sfxBus); o.connect(g); env(g, t, .003, .09, .03, .02, .06); o.start(t); o.stop(t + .12); },
     enter: function (t) { var s = noise(); var f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.2; f.frequency.setValueAtTime(180, t); f.frequency.exponentialRampToValueAtTime(2600, t + .9); var g = gain(0, sfxBus); s.connect(f); f.connect(g); env(g, t, .25, .35, .4, .1, .5); s.start(t); s.stop(t + 1.4); var o = ctx.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(70, t); o.frequency.exponentialRampToValueAtTime(38, t + 1.2); var og = gain(0, sfxBus); o.connect(og); env(og, t + .1, .02, .5, .6, .1, .7); o.start(t); o.stop(t + 1.6); },
     exit: function (t) { var s = noise(); var f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.2; f.frequency.setValueAtTime(2400, t); f.frequency.exponentialRampToValueAtTime(160, t + .8); var g = gain(0, sfxBus); s.connect(f); f.connect(g); env(g, t, .05, .3, .4, .08, .4); s.start(t); s.stop(t + 1.2); },
     card: function (t) { [[880, 0], [1320, 0], [1760, .0], [1108, .16], [1661, .16]].forEach(function (p) { var o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = p[0]; var g = gain(0, sfxBus); o.connect(g); env(g, t + p[1], .005, .22 / (p[0] / 880), .25, .08, 1.4); o.start(t + p[1]); o.stop(t + p[1] + 1.8); }); },
@@ -84,9 +88,9 @@ SM.Audio = (function () {
     flutter: function (t) { for (var i = 0; i < 14; i++) { var s = noise(); var f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 900 + Math.random() * 2200; f.Q.value = 3; var g = gain(0, sfxBus); s.connect(f); f.connect(g); var tt = t + Math.random() * 2.2; env(g, tt, .02, .05, .06, .01, .1); s.start(tt); s.stop(tt + .25); } },
     pop: function (t) { var o = ctx.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(520, t); o.frequency.exponentialRampToValueAtTime(260, t + .08); var g = gain(0, sfxBus); o.connect(g); env(g, t, .003, .16, .04, .02, .08); o.start(t); o.stop(t + .16); }
   };
-  function sfx(name) { if (!ready || !enabled || !SFX[name]) return; try { SFX[name](now() + .01); } catch (e) {} }
-  function duck(on) { if (!ready) return; duckG.gain.setTargetAtTime(on ? .28 : 1, now(), on ? .25 : .8); }
+  function sfx(name) { if (!ready || !enabled || !SFX[name]) return; if (ctx.state !== 'running') { try { ctx.resume(); } catch (e) {} return; } try { SFX[name](now() + .01); } catch (e) {} }
+  function duck(on) { if (!ready) return; duckG.gain.setTargetAtTime(on ? .28 : 1, now(), on ? .08 : .8); }
   function setEnabled(b) { enabled = !!b; try { localStorage.setItem('sm_sfx', enabled ? '1' : '0'); } catch (e) {} if (ready) master.gain.setTargetAtTime(enabled ? .9 : 0, now(), .1); }
   function isEnabled() { return enabled; }
-  return { init: init, setTheme: setTheme, update: update, sfx: sfx, duck: duck, setEnabled: setEnabled, isEnabled: isEnabled, setNearFire: setNearFire, isReady: function () { return ready; } };
+  return { init: init, setTheme: setTheme, update: update, sfx: sfx, duck: duck, setEnabled: setEnabled, isEnabled: isEnabled, setNearFire: setNearFire, isReady: function () { return ready; }, ctx: function () { return ctx; }, voiceBus: function () { return voiceBus; } };
 })();

@@ -9,7 +9,7 @@ SM.ISLANDS.forEach(i => { add(i.say.kid, 'kid'); add(i.say.reader, 'reader'); })
 add(SM.GUIDE.intro.kid, 'guide'); add(SM.GUIDE.intro.reader, 'guide'); SM.GUIDE.nearIsland.forEach(t => add(t, 'guide')); SM.GUIDE.walk.forEach(t => add(t, 'guide'));
 Object.values(SM.GUIDE.lineChange).forEach(t => add(t, 'guide')); add(SM.GUIDE.end, 'guide');
 ['book2', 'book3'].forEach(k => { if (SM.GUIDE[k]) { add(SM.GUIDE[k].kid, 'guide'); add(SM.GUIDE[k].reader, 'guide'); } });
-['book2end', 'book3end', 'kidWarn'].forEach(k => add(SM.GUIDE[k], 'guide'));
+['book2end', 'book3end', 'kidWarn', 'welcomeBack'].forEach(k => add(SM.GUIDE[k], 'guide'));
 if (SM.GUIDE.book3 && SM.GUIDE.kidWarn) add(SM.GUIDE.book3.kid + ' ' + SM.GUIDE.kidWarn, 'guide');
 // main.js 里的向导句
 add('这座岛你已经走过了，想再看一遍也可以。', 'guide'); add('没关系，随时可以再进去。', 'guide');
