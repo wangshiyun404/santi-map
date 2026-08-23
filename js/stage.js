@@ -88,8 +88,8 @@ SM.Stage = (function () {
     onClose = cb; gen++; var g = gen; active = isl; tweens = [];
     scene = new THREE.Scene(); scene.background = new THREE.Color(0x05070f);
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000); camera.position.set(0, 6, 16); camera.lookAt(0, 2, 0);
-    var idx = SM.ISLANDS.indexOf(isl);
-    $('stN').textContent = idx + 1; $('stTitle').textContent = isl.title; $('stYear').textContent = isl.year + ' · ' + SM.LINES[isl.line].name; $('stDot').style.background = SM.LINES[isl.line].css;
+    var idx = SM.ISLANDS.filter(function (i) { return i.book === isl.book; }).indexOf(isl);
+    $('stN').textContent = (SM.BOOKS && SM.BOOKS.length > 1 ? SM.BOOKS[isl.book - 1].short + ' · ' : '') + (idx + 1); $('stTitle').textContent = isl.title; $('stYear').textContent = isl.year + ' · ' + SM.LINES[isl.line].name; $('stDot').style.background = SM.LINES[isl.line].css;
     $('stageUI').classList.remove('hidden'); hideSub(); $('interact').classList.add('hidden'); $('cardPop').classList.add('hidden'); $('thinkBox').classList.add('hidden');
     var api = { scene: scene, camera: camera, H: H, say: say, hideSub: hideSub, interact: interact, btn: btn, wait: wait, tween: tween, isKid: SM.State.isKid, txt: SM.State.txt, island: isl, kid: SM.State.isKid() };
     var builder = SM.Islands[isl.id]; var inst = builder(api); active.inst = inst;

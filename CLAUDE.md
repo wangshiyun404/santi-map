@@ -8,7 +8,8 @@
 - 面向"读不进大部头"的读者（小学五六年级起、无技术背景的文科生）的**浏览器 3D 叙事游戏**：
   沿一条星河走过 13 座岛，30–60 分钟看懂《三体》第一部的**三条故事线**（红岸过去线 / 汪淼现在线 / 三体游戏线）。
 - 它是"阅读的辅助地图"，**不是挑战游戏**：不考验操作、没有失败、不会迷路、随时可回头。
-- 一期（第一部，13 站）已于 2026-08-22 完成并跑通；星河尽头预留"黑暗森林之门"作为二期入口。
+- 一期（第一部，13 站）2026-08-22 完成；二期（第二部《黑暗森林》，14 站）2026-08-23 完成；三期（第三部《死神永生》）待做，设计定稿见 `DESIGN-2-3.md`。
+- 一条河走完三部曲：每部是一段河（`book` 字段），段内参数 s∈[0,1]，全河参数 u=(book-1+s)/NB。第二部河段是黑暗森林主题，有纪元之门、冬眠隧道、站点目录。
 
 ## 2. 设计契约（改动前先对照）
 1. **每座岛固定四件套**：看（30–60 秒低模 3D 演出 + 旁白 + 大字幕）→ 做（10 秒内可完成的轻互动，和情节意义直接相关，无失败分支）→ 收（1–2 张线索卡入"阅读地图册"）→ 想（一句开放式问题；读者模式附对应原著章节）。
@@ -31,12 +32,13 @@
 |---|---|---|
 | `index.html` | 页面骨架（首页/HUD/岛内 UI/地图册/总图） | 加新 UI 元素 |
 | `css/style.css` | 全部样式；`body.kid` 下字号更大 | 视觉调整 |
-| `js/data.js` | **全部内容**：三条线、24 张线索卡、13 座岛（旁白 kid/reader、互动配置、卡片、想一想、原著章节）、小智子台词 | 改文案、加卡片、加岛 |
+| `js/data.js` | 第一部内容：三条线、24 张线索卡、13 座岛（旁白 kid/reader、互动配置、卡片、想一想、原著章节）、小智子台词 | 改第一部文案 |
+| `js/data2.js` | 第二部内容 + **三部曲结构**：`SM.BOOKS`（每部的线、主题、门）、`SM.ERAS`（纪元之门）、`SM.TUNNELS`（冬眠隧道）、26 张卡、14 座岛 | 改第二部文案；加第三部时新建 data3.js 并 push 进 BOOKS |
 | `js/narration.js` | 旁白（语音合成 + 字幕节奏 + 静音） | 语音策略 |
 | `js/state.js` | 进度/卡片/选择/笔记存取；地图册渲染 | 存档结构 |
 | `js/world.js` | 星河世界：主河道曲线、三色交织河道、13 岛微缩景观（`diorama()`）、黑暗森林之门、玩家/向导、相机、点击行走、自动停靠 | 世界/岛外观 |
 | `js/stage.js` | 岛内舞台引擎：独立场景、`say/interact/showCards/think` 流程 API、补间、几何小工具 `H` | 流程机制 |
-| `js/islands.js` | 13 座岛的场景与互动实现，`SM.Islands[id] = function(api){ return {update, run(async), result} }` | 改某一站的画面/互动 |
+| `js/islands.js` / `js/islands2.js` | 第一部 13 岛 / 第二部 14 岛的场景与互动，`SM.Islands[id] = function(api){ return {update, run(async), result} }` | 改某一站的画面/互动 |
 | `js/summary.js` | 终点总图（canvas 绘制，可保存 PNG/打印；沙箱里退化为弹出大图） | 总图版式 |
 | `js/main.js` | 总控：首页、HUD、进出岛、主循环（页面不可见时定时器追赶） | 全局交互 |
 | `build.py` | 生成 `dist/三体阅读地图.html`（单文件可双击）与 `dist/artifact.html`（Artifact 片段） | 发布前 |
@@ -62,7 +64,10 @@ python3 build.py          # 产出 dist/三体阅读地图.html（双击即玩�
   更新方法：在 Claude Code 里用 Artifact 工具、传 `url` 为上面地址、文件为 `dist/artifact.html` 重新发布即可保持同一链接。
 - 源码仓库：GitHub 私有仓库 `wangshiyun404/santi-map`（见 README）。
 
-## 7. 加一座新岛的步骤
+## 7. 加一座新岛 / 加一部的步骤
+加一部：新建 `dataN.js`（push `SM.BOOKS` 一项 {n, name, short, lines, theme, gate}、新 LINES、卡、岛（带 book:N）、ERAS/TUNNELS），新建 `islandsN.js`，world.js 的 `diorama()` 加微缩景观、`THEMES` 加主题，summary.js 的 `PEOPLE/ENDING` 加该部；index.html 引入脚本。其余（河道、门、目录、进度、地图册）自动按 BOOKS 生成。
+
+加一座岛：
 1. `data.js` → `SM.ISLANDS` 按阅读顺序插入 `{id, line, title, year, say:{kid,reader}, interact:{type,prompt,btn}, cards:[...], think, ref}`；需要的新卡片加进 `SM.CARDS`。
 2. `islands.js` → 写 `SM.Islands[id]`：用 `api.H` 搭场景、设相机；`run` 里 `await api.say(...)` → `await api.interact(prompt, setup)` → 可选收尾 `say`；互动结果放 `this.result`。
 3. `world.js` → `diorama(id)` 里加该岛的微缩景观（5–15 个简单几何体即可）。

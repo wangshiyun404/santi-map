@@ -13,12 +13,12 @@
 <div id="title">
   <h1>三体</h1>
   <h2>阅 读 地 图</h2>
-  <p class="sub">一条可以走进去的星河。沿河前行，走过 13 座岛，用半小时看懂《三体》第一部的三条故事线：谁是谁、发生了什么、为什么。没有失败，不会迷路，随时可以回头。</p>
+  <p class="sub">一条可以走进去的星河。沿河前行，第一部 13 座岛、第二部 14 座岛，看懂《三体》与《黑暗森林》的故事线：谁是谁、发生了什么、为什么。没有失败，不会迷路，随时可以回头。</p>
   <div class="modes">
     <button class="modebtn" data-mode="kid"><b>小学生模式</b><span>字少一点、讲慢一点，有小智子全程陪着走。适合五六年级起。</span></button>
     <button class="modebtn" data-mode="reader"><b>读者模式</b><span>完整旁白，每站附"想一想"和对应原著章节，方便回头翻书。</span></button>
   </div>
-  <p class="cont hidden" id="contRow">上次走到第 <b id="contN">1</b> 站 · <button id="contBtn">继续上次的旅程</button> · <button id="resetBtn">重新开始</button></p>
+  <p class="cont hidden" id="contRow">上次走到 <b id="contN"></b> · <button id="contBtn">继续上次的旅程</button> · <button id="resetBtn">重新开始</button></p>
   <div class="legend">
     <span><i style="background:#ff5a3c"></i>红岸过去线</span>
     <span><i style="background:#3fa9ff"></i>汪淼现在线</span>
@@ -32,9 +32,10 @@
 <div id="hud" class="hidden">
   <div id="progress">
     <div class="rows"></div>
-    <div class="cap">第 <b id="stationNo">1</b> / 13 站 · <span id="stationName"></span></div>
+    <div class="cap"><b id="bookName"></b> · 第 <b id="stationNo">1</b> / <span id="stationTotal">13</span> 站 · <span id="stationName"></span></div>
   </div>
   <div id="topRight">
+    <button class="bigbtn small" id="dirBtn">站点目录</button>
     <button class="bigbtn small" id="albumBtn">阅读地图册<span id="albumBadge">0</span></button>
     <button class="bigbtn small" id="muteBtn">🔊 旁白</button>
     <button class="bigbtn small" id="modeBtn">切换模式</button>
@@ -47,7 +48,7 @@
   <div id="hint">↑ / W 前进 · ↓ / S 后退 · 点击地面也可以走 · 到岛边按"进入"</div>
   <div id="controls">
     <button class="bigbtn primary hidden" id="enterBtn">进 入</button>
-    <button class="bigbtn primary hidden" id="finishBtn">生成我的阅读地图</button>
+    <button class="bigbtn primary hidden" id="finishBtn">生成阅读地图</button>
     <div class="row">
       <button class="bigbtn" id="backBtn">◀ 后退</button>
       <button class="bigbtn" id="fwdBtn">前进 ▶</button>
@@ -79,6 +80,14 @@
   </div>
 </div>
 
+<!-- 站点目录 / 快速旅行 -->
+<div id="dir" class="hidden">
+  <button class="bigbtn small close" id="dirClose">关闭</button>
+  <h2>站点目录</h2>
+  <p class="sub">点任意一站直接跳过去（走过的站可以重看）。</p>
+  <div id="dirBody"></div>
+</div>
+
 <!-- 地图册 -->
 <div id="album" class="hidden">
   <button class="bigbtn small close" id="albumClose">关闭</button>
@@ -90,6 +99,7 @@
 <!-- 终点总图 -->
 <div id="summary" class="hidden">
   <div class="tools">
+    <span id="sumTabs"></span>
     <button class="bigbtn small primary" id="dlBtn">保存为图片</button>
     <button class="bigbtn small" id="printBtn">打印</button>
     <button class="bigbtn small" id="sumClose">返回星河</button>
@@ -101,11 +111,13 @@
 
 <script src="three.min.js"></script>
 <script src="js/data.js"></script>
+<script src="js/data2.js"></script>
 <script src="js/narration.js"></script>
 <script src="js/state.js"></script>
 <script src="js/world.js"></script>
 <script src="js/stage.js"></script>
 <script src="js/islands.js"></script>
+<script src="js/islands2.js"></script>
 <script src="js/summary.js"></script>
 <script src="js/main.js"></script>
 </body>

@@ -144,6 +144,22 @@ body.kid #interact .prompt { font-size:24px; }
 #album .card.locked::after { content:"？"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:60px; color:#fff; visibility:visible; }
 #album .sec { font-size:16px; color:var(--muted); margin:22px 0 10px; letter-spacing:.2em; }
 
+/* ===== 站点目录 ===== */
+#dir { position:fixed; inset:0; z-index:40; background:rgba(4,6,14,.94); overflow:auto; padding:40px 48px; }
+#dir h2 { font-size:30px; margin-bottom:6px; } #dir .sub { color:var(--muted); margin-bottom:10px; }
+#dir .close { position:fixed; top:24px; right:28px; }
+#dir h3.book, #album h3.book { font-size:20px; margin:26px 0 8px; display:flex; align-items:center; gap:14px; }
+#dir h3.book small, #album h3.book small { color:var(--muted); font-size:14px; }
+.dirgrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:10px; }
+.dirst { position:relative; text-align:left; padding:12px 14px 12px 18px; border-radius:12px; border:1px solid var(--panel-line); background:rgba(255,255,255,.05); color:var(--text); display:grid; grid-template-columns:auto 1fr; column-gap:10px; align-items:center; transition:.15s; }
+.dirst:hover { background:rgba(255,255,255,.12); }
+.dirst i { position:absolute; left:0; top:8px; bottom:8px; width:4px; border-radius:2px; }
+.dirst b { font-size:20px; color:var(--muted); grid-row:span 2; }
+.dirst span { font-size:15px; } .dirst small { font-size:12px; color:var(--muted); }
+.dirst em { position:absolute; right:12px; top:10px; font-style:normal; color:#8fe3a5; }
+.dirst.done { border-color:rgba(143,227,165,.35); } .dirst.cur { outline:2px solid #9fc0ff; }
+#sumTabs .bigbtn.on { background:#3b4a8a; }
+
 /* ===== 终点总图 ===== */
 #summary { position:fixed; inset:0; z-index:45; background:#0a0d1c; overflow:auto; padding:30px; }
 #summary .tools { position:fixed; top:18px; right:24px; display:flex; gap:10px; z-index:2; }
