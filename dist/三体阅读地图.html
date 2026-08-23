@@ -190,7 +190,7 @@ body.kid #interact .prompt { font-size:24px; }
 <div id="title">
   <h1>三体</h1>
   <h2>阅 读 地 图</h2>
-  <p class="sub">一条可以走进去的星河。沿河前行，第一部 13 座岛、第二部 14 座岛，看懂《三体》与《黑暗森林》的故事线：谁是谁、发生了什么、为什么。没有失败，不会迷路，随时可以回头。</p>
+  <p class="sub">一条可以走进去的星河。沿河前行，走过三部曲 41 座岛：《三体》13 站、《黑暗森林》14 站、《死神永生》14 站，看懂每一部的故事线：谁是谁、发生了什么、为什么。没有失败，不会迷路，随时可以回头。</p>
   <div class="modes">
     <button class="modebtn" data-mode="kid"><b>小学生模式</b><span>字少一点、讲慢一点，有小智子全程陪着走。适合五六年级起。</span></button>
     <button class="modebtn" data-mode="reader"><b>读者模式</b><span>完整旁白，每站附"想一想"和对应原著章节，方便回头翻书。</span></button>
@@ -202,7 +202,7 @@ body.kid #interact .prompt { font-size:24px; }
     <span><i style="background:#ffc94a"></i>三体游戏线</span>
     <span><i style="background:#f4f1ff"></i>汇合</span>
   </div>
-  <p class="foot">根据刘慈欣《三体》第一部情节自写转述 · 仅供阅读辅助与课堂使用</p>
+  <p class="foot">根据刘慈欣《三体》三部曲情节自写转述 · 仅供阅读辅助与课堂使用 · 第三部建议六年级以上或亲子共走</p>
 </div>
 
 <!-- 星河 HUD -->
@@ -648,6 +648,151 @@ SM.GUIDE = {
 
 </script>
 <script>
+/* 第三部《死神永生》内容（在 data2.js 之后加载）
+ * 线：cx=程心线（玫瑰） yun=云天明线（淡金） cosmos=宇宙线·歌者与归零者（灰白） merge=汇合
+ * 旁白为自写转述；云天明的童话只概述意象，不复述原文；歌者的歌为自写。
+ */
+(function () {
+  Object.assign(SM.LINES, {
+    cx:     { name: '程心线',       short: '程心',   color: 0xff7aa8, css: '#ff7aa8', desc: '从阶梯计划到宇宙尽头' },
+    yun:    { name: '云天明线',     short: '云天明', color: 0xf3dc9a, css: '#f3dc9a', desc: '一颗星、三个童话、一个小宇宙' },
+    cosmos: { name: '宇宙线·歌者与归零者', short: '宇宙', color: 0xcfd3de, css: '#cfd3de', desc: '四维碎块、光粒、二向箔、回归' }
+  });
+  SM.BOOKS.push({ n: 3, name: '第三部 死神永生', short: '死神永生', lines: ['cx', 'yun', 'cosmos'], theme: 'space', gate: '时间之外 · 三部曲终点', gateSub: '给时光以生命，给岁月以文明' });
+  SM.BOOKS[1].gate = '死神永生之门 · 第三部'; SM.BOOKS[1].gateSub = '走进去，就是《死神永生》';
+
+  SM.ERAS.push(
+    { book: 3, s: 0.0,   name: '威慑纪元', year: '罗辑执剑 54 年 · 三体与地球的脆弱和平' },
+    { book: 3, s: 0.43,  name: '广播纪元', year: '万有引力号广播三体坐标 · 三体世界毁灭' },
+    { book: 3, s: 0.495, name: '掩体纪元', year: '人类躲到巨行星背后' },
+    { book: 3, s: 0.75,  name: '银河纪元', year: '太阳系二维化之后 · 星环号飞向 DX3906' },
+    { book: 3, s: 0.975, name: '时间之外', year: '小宇宙 647 · 宇宙的尽头与新生' }
+  );
+  SM.TUNNELS.push(
+    { book: 3, s0: 0.16, s1: 0.2, texts: ['程心冬眠 · 两百多年', '危机纪元结束 · 威慑纪元开始', '三体向人类输出科技与文化', '威慑纪元 61 年：程心醒来'] },
+    { book: 3, s0: 0.795, s1: 0.83, texts: ['死线 · 光速降为零', '外面过去了 1890 万年', '蓝星上的文明来了又去', '石头上的字还在'] }
+  );
+
+  var C = {
+    chengxin:   { type: 'person', name: '程心', sub: '第三部的主角，两次被交到手里的人', text: '航天工程师。她提出了阶梯计划，后来被选为执剑人，再后来拥有了一艘光速飞船。每一次，她都选择了"不伤害"——每一次，代价都极大。' },
+    yuntianming:{ type: 'person', name: '云天明', sub: '送程心一颗星的人', text: '程心的大学同学，身患绝症。他匿名买下一颗星送给她，又把自己的大脑交给阶梯计划送向三体舰队。多年后，他用三个童话把情报送回地球。' },
+    wade:       { type: 'person', name: '维德', sub: '"前进，不择手段地前进"', text: '情报局局长，冷酷、强硬。他想当执剑人，也想造光速飞船。他相信只有不择手段人类才能活下去——程心两次挡在他前面。' },
+    aiaa:       { type: 'person', name: '艾AA', sub: '程心的朋友', text: '天文学家，开朗、实际。她陪程心穿过掩体纪元，一起乘星环号离开太阳系，最后留在蓝星上，和云天明一起老去。' },
+    guanyifan:  { type: 'person', name: '关一帆', sub: '万有引力号的宇宙学家', text: '在四维碎块里见过三维世界的"内部"，也见过光速被降低的世界。最后和程心一起走进小宇宙，又一起走出来。' },
+    sophonbot:  { type: 'person', name: '智子（人形）', sub: '三体派来的机器人使者', text: '穿和服、会茶道的美丽女子，是三体世界在地球的代言人。威慑失败后她宣布人类迁往澳大利亚；三体毁灭后她向人类告别。' },
+    singer:     { type: 'person', name: '歌者', sub: '一个随手"清理"的文明成员', text: '遥远文明的一个普通成员，边唱歌边工作。它看到了太阳系的坐标，顺手扔出一张二向箔——就像人随手拍死一只虫子。' },
+    zeroer:     { type: 'concept', name: '归零者', sub: '想让宇宙重新开始的人', text: '宇宙被一次次维度战争打成了碎片。归零者向全宇宙广播：把你们拿走的物质还回来，让宇宙回到起点，重新开始。' },
+    star3906:   { type: 'event', name: '云天明的星星', sub: 'DX3906，286 光年外', text: '云天明用专利换来的钱，匿名买下一颗星送给程心。几百年后，这颗星成了程心和人类最后的去处。' },
+    staircase:  { type: 'concept', name: '阶梯计划', sub: '把一个大脑送向三体舰队', text: '程心的方案：沿途引爆核弹推动一张光帆，把探测器加速到光速的 1%。载荷一减再减，最后只剩一个人的大脑——云天明的。' },
+    swordholder:{ type: 'concept', name: '执剑人', sub: '握着引力波广播开关的人', text: '威慑的开关必须交给一个人，而这个人必须让三体相信"他真的会按"。罗辑守了 54 年；人类选了温柔的程心接替他。' },
+    detfail:    { type: 'event', name: '威慑失败', sub: '交接后的十五分钟', text: '程心接过开关几分钟后，水滴就来了。她没有按下去。引力波发射台被毁，威慑瓦解，三体舰队重新转向地球。' },
+    gravity:    { type: 'concept', name: '万有引力号', sub: '最后一台能广播的机器', text: '一艘携带引力波天线的飞船，在深空追击蓝色空间号。它成了人类最后一个能把三体坐标喊出去的声音。' },
+    fourD:      { type: 'concept', name: '四维碎块', sub: '能看见三维世界"内部"的地方', text: '宇宙早年有更高的维度，如今只剩碎片。进入四维空间的人，能同时看见一个封闭物体的外面和里面——书里写得像一场眩晕的梦。' },
+    broadcast:  { type: 'event', name: '引力波广播', sub: '三体的坐标传向全宇宙', text: '万有引力号的船员按下了程心没有按的按钮。三体星的位置广播出去，广播纪元开始——地球的位置也因此随时可能暴露。' },
+    triend:     { type: 'event', name: '三体世界的毁灭', sub: '一粒光粒击中恒星', text: '广播七年后，一粒以接近光速飞行的"光粒"击中三体的太阳，整个三体世界毁灭。智子向人类告别：你们的结局，不会比我们好。' },
+    tales:      { type: 'concept', name: '云天明的三个童话', sub: '装着情报的故事', text: '云天明通过智子见到程心，给她讲了三个童话。每个意象都藏着一条线索：降维打击、光速飞船、黑域。人类花了很多年才读懂一部分。' },
+    curvature:  { type: 'concept', name: '光速飞船（曲率驱动）', sub: '把空间当帆', text: '不靠喷射，而是弯曲飞船后方的空间，让飞船"滑"向光速。童话里的空中之帆说的就是它。代价：它会留下一条航迹。' },
+    blackdomain:{ type: 'concept', name: '黑域', sub: '把自己关进安全的牢笼', text: '把太阳系内的光速降到很低，外面的人就知道这里的文明永远出不去——于是不必打击它。代价是人类再也离不开太阳系。' },
+    bunker:     { type: 'concept', name: '掩体计划', sub: '躲到木星、土星背后', text: '如果有光粒打来，太阳会爆发；把太空城建在巨行星的阴影里，就能躲过。人类为此造了几十座太空城——却没想到打击来的不是光粒。' },
+    dualfoil:   { type: 'event', name: '二向箔', sub: '一张小纸片', text: '歌者扔出的东西只有一张纸片大小。它会让碰到的一切从三维跌入二维——整个太阳系，变成一幅画。' },
+    flatten:    { type: 'event', name: '太阳系二维化', sub: '降维打击', text: '二维化从冥王星外开始，像一张无法逃离的薄膜席卷内太阳系。书里把二维化的太阳系比作梵高的《星空》。只有光速飞船能逃出去。' },
+    deathline:  { type: 'concept', name: '死线', sub: '光速为零的地方', text: '光速飞船的航迹里光速会降低；而"死线"里的光速几乎为零，时间近乎停止。程心和关一帆在那里待了"一小会儿"，外面过去了 1890 万年。' },
+    u647:       { type: 'concept', name: '小宇宙 647', sub: '云天明送给程心的田园', text: '三体文明能造出独立于大宇宙之外的小宇宙，等宇宙重生后再回去。云天明把 647 号送给了程心。' },
+    returnmv:   { type: 'concept', name: '回归运动', sub: '把物质还给宇宙', text: '归零者说：如果每个小宇宙都把物质还回去，大宇宙才能坍缩、重生。程心和关一帆决定回应——离开 647，只留下一点点东西。' },
+    ecosphere:  { type: 'event', name: '生态球与石头上的字', sub: '留给新宇宙的五公斤', text: '程心留下一个小小的生态球和一瓶记忆，走出小宇宙。"把字刻在石头上"——人总以为能一直保存下去的东西，其实只有刻在石头上的才留得最久。' },
+    era_broadcast:{ type: 'era', name: '广播纪元', sub: '威慑失败 → 三体毁灭', text: '从万有引力号广播开始计算。地球的位置随时可能被发现，人类在恐惧中开始掩体计划。' },
+    era_bunker: { type: 'era', name: '掩体纪元', sub: '太空城的时代', text: '人类躲到巨行星背后生活的纪元。光速飞船被禁止，维德的星环城与政府对峙，最后二向箔到来。' },
+    era_galaxy: { type: 'era', name: '银河纪元', sub: '太阳系之后', text: '太阳系二维化后，人类幸存者的纪元：星环号、蓝色空间号和万有引力号的后代散落在银河系里。' }
+  };
+  Object.keys(C).forEach(function (k) { C[k].book = 3; SM.CARDS[k] = C[k]; });
+
+  var I = [
+    { id: 'b3_star', book: 3, line: 'yun', title: '云天明的星星', year: '危机纪元初年',
+      say: { kid: '第三部的主角叫程心，是一位航天工程师。她有一个大学同学叫云天明，很内向，也病得很重。云天明悄悄用一大笔钱，买下了一颗离地球 286 光年的星星，送给程心——程心一直不知道是谁送的。记住这颗星的名字：DX3906。它在很远的将来，会成为程心最后的家。',
+        reader: '第三部从危机纪元初年讲起。航天工程师程心在行星防御理事会的情报机构工作。她的大学同学云天明身患绝症，用哥哥转让专利所得的巨款，匿名为她买下了一颗恒星——DX3906，286 光年外，连同可能存在的行星。这是一份没有署名、也没有回音的礼物。几百年后，它会成为程心和人类最后的去处。' },
+      interact: { type: 'starmap', prompt: '在星图上找到那颗被买下的星——它比别的星微微发粉。点它。', btn: '找到了' },
+      cards: ['chengxin', 'yuntianming', 'star3906'], think: '送一个人一颗星，却不告诉她是谁送的。你觉得云天明在想什么？', ref: '对应原著：《死神永生》第一部·危机纪元（买星）' },
+    { id: 'b3_staircase', book: 3, line: 'cx', title: '阶梯计划', year: '危机纪元初年',
+      say: { kid: '人类想派一个探测器去看看三体舰队。程心想出一个办法：在路上放很多核弹，一颗一颗引爆，推着一张大帆飞得越来越快——像上楼梯一样，所以叫"阶梯计划"。可是帆太小，带不了多少东西，最后只能带一个人的大脑。云天明自愿去了。从此，他飞向了三体舰队。',
+        reader: '程心提出"阶梯计划"：沿航线布置上千枚核弹，逐级引爆推动一张辐射帆，把探测器加速到光速的 1%，去接触三体舰队。载荷一减再减，最后只剩一个人的大脑——希望三体人能复活它、从中获取情报。身患绝症的云天明自愿成为这个大脑。发射后帆索断裂，探测器偏离航线，下落不明。程心进入冬眠，作为"万一云天明联系地球"时的联络人。' },
+      interact: { type: 'bombs', prompt: '沿着航线，一颗一颗引爆核弹，推着光帆加速。', btn: '引 爆' },
+      cards: ['staircase'], think: '把一个人的大脑送向敌人，是残忍还是希望？云天明自己怎么看这件事，你猜得到吗？', ref: '对应原著：《死神永生》第一部·阶梯计划' },
+    { id: 'b3_sword', book: 3, line: 'cx', title: '执剑人交接', year: '威慑纪元 61—62 年',
+      say: { kid: '程心醒来时，已经是两百多年后的威慑纪元了。罗辑一个人握着开关守了五十四年，人类想换一个人。大家都喜欢温柔善良的程心，不喜欢冷酷的维德。可三体人会怕一个温柔的人吗？人类把开关交给了程心。',
+        reader: '威慑纪元 61 年，程心醒来。威慑维持了半个多世纪，三体向人类输出科技与文化，人类社会变得柔软、乐观，开始厌恶罗辑那种"随时会按下去"的执剑人。候选人中有冷酷的维德——他甚至为了当选试图杀死程心——和人们真心喜爱的程心。人类选择了程心。三体世界一直在等这一刻。' },
+      interact: { type: 'pick', prompt: '如果由你决定，你会把开关交给谁？', options: ['维德：冷酷，三体一定怕他', '程心：善良，大家都信任她'] },
+      cards: ['swordholder', 'wade', 'sophonbot'], think: '一个"好人"适合握这个开关吗？威慑需要的是什么样的人？', ref: '对应原著：《死神永生》第二部·威慑纪元' },
+    { id: 'b3_fail', book: 3, line: 'cx', title: '威慑失败', year: '威慑纪元 62 年',
+      say: { kid: '程心刚接过开关几分钟，水滴就从天上冲下来了——三体人早就算准了她不会按。程心手里握着开关，却怎么也按不下去：按下去，三体和地球都会毁灭。广播台被水滴撞毁，威慑没有了。三体人宣布：人类都搬到澳大利亚去住。人类失去了保护伞。',
+        reader: '交接完成后仅十几分钟，水滴从太阳系各处扑向引力波发射台。程心握着开关——按下去意味着三体与地球同归于尽——她没有按。发射台被毁，威慑瓦解，三体舰队重新转向太阳系。智子宣布：全人类迁往澳大利亚。大移民时期是人类最黑暗的年代之一。只有一艘远在深空的万有引力号，还携带着一台引力波天线。' },
+      interact: { type: 'countdown', prompt: '水滴正在接近，你手里是开关。十秒钟。', options: ['按下去', '不按'] },
+      cards: ['detfail'], think: '程心没有按。如果是你，你会按吗？"不伤害任何人"的选择，有时候会伤害所有人吗？', ref: '对应原著：《死神永生》第二部·威慑后一小时' },
+    { id: 'b3_4d', book: 3, line: 'cosmos', title: '万有引力号·四维碎块', year: '威慑纪元 63 年',
+      say: { kid: '远在太阳系外的万有引力号和蓝色空间号，飞进了一块奇怪的空间：四维碎块。在那里，人可以同时看见一个盒子的外面和里面，看见一个人身体里的一切——宇宙原来有更多的维度，只是后来"掉下来"了。在那里，船员们做了一个决定：把三体的坐标广播出去。',
+        reader: '万有引力号追击蓝色空间号至深空，两船误入一片"四维碎块"——宇宙高维时代的残片。在四维空间里，三维物体的内部一览无余：封闭的舱室、人的身体、飞船的核心。蓝色空间号的船员借此控制了万有引力号。水滴在四维碎块中失效。随后，他们启动引力波天线，向全宇宙广播了三体世界的坐标。' },
+      interact: { type: 'fourD', prompt: '你在四维空间里。转动这个立方体——试着看到它的"里面"。', btn: '广 播' },
+      cards: ['gravity', 'fourD', 'broadcast'], think: '广播三体的坐标，也等于告诉宇宙"这附近有人"。这次按下去的人和程心的选择相反——你更赞同谁？', ref: '对应原著：《死神永生》第二部·四维碎块' },
+    { id: 'b3_triend', book: 3, line: 'cosmos', title: '三体世界的毁灭', year: '广播纪元 7 年',
+      say: { kid: '广播发出去七年后，一粒小小的"光粒"从宇宙深处飞来，击中了三体的太阳。三体世界毁灭了。三体人的舰队四散逃走，再也不来地球了。智子向人类告别：你们的结局，不会比我们好多少。第一部那条金色的线，在这里熄灭。',
+        reader: '广播纪元 7 年，人类观测到三体的恒星被一粒接近光速的"光粒"击中，整个三体世界毁灭。三体舰队放弃太阳系、四散而去。智子在告别时说得很清楚：坐标已经广播，宇宙迟早会注意到太阳系——黑暗森林的打击只是时间问题。从第一部延续下来的三体线，到这里熄灭。' },
+      interact: { type: 'watch', prompt: '天文台的屏幕上，是三体的太阳。', btn: '观 测' },
+      cards: ['triend', 'era_broadcast'], think: '敌人毁灭了，人类却更害怕了。为什么？', ref: '对应原著：《死神永生》第三部·广播纪元' },
+    { id: 'b3_tales', book: 3, line: 'yun', title: '云天明的三个童话', year: '广播纪元 7 年',
+      say: { kid: '这时候，云天明出现了！他的大脑被三体人复活了，现在活在三体舰队里。三体人允许他和程心见一面，但不能泄露任何秘密。于是云天明给程心讲了三个童话——童话里藏着救人类的办法，等着人类自己去猜。三个童话，三个秘密。',
+        reader: '广播纪元 7 年，三体安排程心与云天明"会面"。云天明的大脑已被复活并拥有身体，生活在三体舰队中。他不能直接说出任何情报，于是讲了三个童话：一个画师把人画进画里、一片饕餮海与一艘空中之帆、一位在水下不会变形的深水王子。人类成立专门机构破译这些意象，最终读出三条线索：二维化打击、曲率驱动光速飞船、黑域。' },
+      interact: { type: 'tales', prompt: '三个童话，三个秘密。每听完一个，猜猜它在说什么。' },
+      cards: ['tales', 'curvature', 'blackdomain'], think: '为什么云天明要用童话而不是直说？一个故事能藏住多少东西？', ref: '对应原著：《死神永生》第三部·云天明的童话' },
+    { id: 'b3_bunker', book: 3, line: 'cx', title: '掩体计划', year: '掩体纪元',
+      say: { kid: '人类从童话里猜到：打击可能像打三体那样，用光粒击中太阳。太阳爆炸时，木星、土星这些大行星可以挡住它。于是人类在大行星的背后造了几十座太空城，全人类搬了进去。这叫"掩体计划"。大家觉得这下安全了。',
+        reader: '从三体的毁灭方式和童话线索出发，人类判断最可能的打击是"光粒击中太阳"。于是启动掩体计划：在木星、土星、天王星、海王星的背阴面建造数十座太空城，全人类迁入掩体纪元。光速飞船研究被禁止——它的航迹会暴露太阳系，且被视为少数人的逃生特权。但人类猜错了打击的方式。' },
+      interact: { type: 'bunker', prompt: '把太空城摆到大行星的背后去。', options: ['木星背后', '土星背后', '天王星背后', '海王星背后'] },
+      cards: ['bunker', 'era_bunker'], think: '人类按自己见过的方式防备敌人。你觉得这件事可靠吗？', ref: '对应原著：《死神永生》第四部·掩体纪元' },
+    { id: 'b3_wade', book: 3, line: 'cx', title: '光速飞船与维德', year: '掩体纪元 11 年',
+      say: { kid: '程心把自己的公司交给了维德，让他去造光速飞船——那是真正能逃出去的东西。可政府禁止造这种船，维德为了继续，准备和政府打仗。程心被叫醒，维德说：只要你同意，我就打。程心说：不，停下。维德真的停下了，然后他被带走了。光速飞船也停了。',
+        reader: '程心将星环公司交给维德，全力研发曲率驱动飞船。掩体纪元 11 年，星环城因光速飞船研究与政府对峙，维德掌握反物质武器，准备开战。他唤醒程心，把决定权交给她——他曾承诺"不惜一切，但除非程心同意"。程心命令他停下。维德照做，被处决；光速飞船研究随之中止。多年后程心才明白，这意味着什么。' },
+      interact: { type: 'pick', prompt: '维德说：只要你点头，我就打下去。', options: ['让他继续：光速飞船是唯一的出路', '让他停下：不能为此开战'] },
+      cards: ['wade'], think: '"失去人性，失去很多；失去兽性，失去一切。"维德这句话你同意吗？程心两次选择了人性，你怎么看？', ref: '对应原著：《死神永生》第四部·星环城' },
+    { id: 'b3_singer', book: 3, line: 'cosmos', title: '歌者与二向箔', year: '掩体纪元 66 年',
+      say: { kid: '在很远很远的地方，有一个文明里普通的一员，书里叫它"歌者"。它一边哼歌一边工作，工作就是"清理"：看到哪里有别的文明的坐标，就顺手处理掉。它看到了太阳系的坐标。它拿出一张小纸片——二向箔——轻轻扔了出去。就像我们随手拍死一只虫子。',
+        reader: '叙事在这里离开人类，来到一个遥远文明的"种子"船上。一个被称作歌者的普通成员，一边吟唱一边执行清理工作。它注意到太阳系的坐标（以及那条暴露位置的曲率航迹），判断这个文明不值得用光粒，于是取出一张二向箔，随手弹向太阳系。整个过程没有恨意，甚至没有多想——这正是黑暗森林最可怕的地方。' },
+      interact: { type: 'foil', prompt: '歌者哼着歌，从工具箱里取出一张薄薄的纸片。', btn: '扔出去' },
+      cards: ['singer', 'dualfoil'], think: '歌者不恨人类，甚至没怎么想。一个没有恶意的毁灭，比有恶意的更可怕吗？', ref: '对应原著：《死神永生》第五部·歌者' },
+    { id: 'b3_flat', book: 3, line: 'merge', title: '太阳系二维化', year: '掩体纪元 67 年',
+      say: { kid: '纸片碰到太阳系的那一刻，一切开始变扁：先是冥王星，然后是海王星、土星、木星、地球、太阳……所有东西都被压进一张平平的画里，像梵高的《星空》。所有太空城都来不及逃。只有一艘船飞了出去——那是维德偷偷造出来的唯一一艘光速飞船，星环号，上面坐着程心和她的朋友艾AA。',
+        reader: '二维化从冥王星外开始，以光速向内席卷：行星、太空城、太阳，一切跌入二维，变成一幅巨大而美丽的平面图景。掩体计划毫无用处。维德的团队在被关停前秘密造出的唯一一艘曲率驱动飞船——星环号——载着程心与艾AA以光速逃离。人类文明在太阳系的部分，到此为止。' },
+      interact: { type: 'flatten', prompt: '二维化正在逼近。星环号已经就绪。', btn: '光速逃离' },
+      cards: ['flatten', 'aiaa'], think: '书里说二维化的太阳系"很美"。毁灭可以是美的吗？你看着这幅画，想到了什么？', ref: '对应原著：《死神永生》第五部·掩体纪元 67 年' },
+    { id: 'b3_blue', book: 3, line: 'cx', title: '蓝星与死线', year: '银河纪元',
+      say: { kid: '星环号飞了几百年，到了云天明送的那颗星——DX3906。那里有一颗蓝色的星球，人们叫它蓝星。程心在那里遇到了万有引力号的关一帆。他们去附近看一条奇怪的"线"——那里光几乎不会动，时间也几乎停了。等他们回来，外面已经过去了一千八百九十万年。',
+        reader: '星环号抵达 DX3906，落在一颗海洋行星——蓝星上。程心在那里遇到万有引力号的宇宙学家关一帆。两人前往邻近的灰星考察，遭遇一条"死线"：光速飞船航迹衰变成的光速为零的区域。他们被困其中，感觉只过了一会儿；脱困回到蓝星时，外面已过去 1890 万年。艾AA和后来抵达的云天明，早已在这颗星上度过了一生。' },
+      interact: { type: 'deathline', prompt: '飞向灰星，看看那条线。', btn: '出 发' },
+      cards: ['guanyifan', 'deathline', 'era_galaxy'], think: '程心总是"错过"：错过阶梯计划的回音，错过威慑，错过云天明。你觉得这是她的命，还是她的选择？', ref: '对应原著：《死神永生》第六部·银河纪元' },
+    { id: 'b3_647', book: 3, line: 'yun', title: '石头上的字与小宇宙 647', year: '1890 万年后',
+      say: { kid: '蓝星上，程心找到了一块大石头，上面刻着字——是云天明和艾AA留下的。他们在这里等了很久很久，后来老去了。他们给程心留下一扇门：门后是一个小小的宇宙，是云天明送给程心的第二份礼物——小宇宙 647。程心和关一帆走了进去。',
+        reader: '蓝星的岩石上刻着云天明和艾AA留下的话：他们来过，等过，也在这里度过了一生。他们留下一扇"门"——通往三体文明建造的小宇宙 647，独立于大宇宙之外，时间在里面可以另算。这是云天明送给程心的最后一件礼物。程心与关一帆走进门去。' },
+      interact: { type: 'stone', prompt: '石头上的字被风沙盖住了。点它，把字擦出来。', btn: '走进门' },
+      cards: ['u647'], think: '云天明等了她一辈子。你觉得他遗憾吗？"把字刻在石头上"——为什么他们选择刻字，而不是留一段录音？', ref: '对应原著：《死神永生》第六部·蓝星' },
+    { id: 'b3_end', book: 3, line: 'merge', final: true, title: '归零者与生态球', year: '时间之外',
+      say: { kid: '在小宇宙里，程心和关一帆收到了一条发给全宇宙的广播：宇宙被一次次打击弄坏了，如果每个小宇宙都把拿走的东西还回去，宇宙就能重新开始。他们决定回应：离开小宇宙，把一切还回去。程心只留下了一个小小的生态球，里面有一条鱼、一点水、一点光——留给新的宇宙。三条线在这里汇合，故事讲完了。',
+        reader: '小宇宙 647 里，程心与关一帆收到归零者的广播："回归运动"——请所有小宇宙归还物质，让大宇宙能够坍缩、重生。他们决定响应，离开 647。程心只留下一个五公斤的小生态球和一瓶记忆，作为给新宇宙的礼物。三部曲在这里结束：从 1967 年清华园的一副眼镜，到时间之外的一个小生态球。"把字刻在石头上"——这是全书最后的态度。' },
+      interact: { type: 'ecosphere', prompt: '小宇宙的门开着。把生态球轻轻放下。', btn: '放下生态球' },
+      cards: ['zeroer', 'returnmv', 'ecosphere'], think: '三部曲从一个女孩失去父亲开始，到另一个女人把生态球留给新宇宙结束。你觉得《三体》最后想说的是什么？走完这张地图，你愿意去读原著吗？', ref: '对应原著：《死神永生》第六部·时间之外' }
+  ];
+  I.forEach(function (i) { SM.ISLANDS.push(i); });
+
+  Object.assign(SM.GUIDE.lineChange, {
+    cx: '河变成玫瑰色——这是程心的线。', yun: '河变成淡金——云天明的线：一颗星、三个童话、一个小宇宙。', cosmos: '河变成灰白——宇宙的线：四维碎块、光粒、歌者、归零者。'
+  });
+  SM.GUIDE.book3 = {
+    kid: '河升到太空里来了。第三部最长、也最远：从几百年后一直讲到宇宙的尽头。有些地方会有点沉重——我会陪着你。三条线：程心、云天明，和宇宙。',
+    reader: '进入第三部《死神永生》。这一部的时间尺度从威慑纪元跨到宇宙终结，叙事在程心、云天明和"宇宙本身"（四维碎块、歌者、归零者）之间切换。纪元之门会帮你记住时间线；第 11 站请做好准备。'
+  };
+  SM.GUIDE.book3end = '三部曲走完了。去生成《死神永生》的阅读地图吧——三张地图拼在一起，就是整部《三体》。';
+  SM.GUIDE.kidWarn = '小提示：第三部比前两部更沉重、更抽象，建议六年级以上，或者和大人一起走。';
+})();
+
+</script>
+<script>
 /* 旁白：浏览器离线语音合成 + 字幕 */
 SM.Narr = (function () {
   var synth = window.speechSynthesis;
@@ -787,7 +932,7 @@ SM.World = (function () {
   var raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
   var UP = new THREE.Vector3(0, 1, 0), keys = {}, holdDir = 0;
   var onNear = null, curLine = null, onLineChange = null, curBook = -1, onBookChange = null, frozen = false;
-  var THEMES = { stars: { bg: new THREE.Color(0x05070f), fog: 0.0065 }, forest: { bg: new THREE.Color(0x020308), fog: 0.012 } };
+  var THEMES = { stars: { bg: new THREE.Color(0x05070f), fog: 0.0065 }, forest: { bg: new THREE.Color(0x020308), fog: 0.012 }, space: { bg: new THREE.Color(0x03030c), fog: 0.0035 } };
   var themeBg = new THREE.Color(0x05070f), themeFog = 0.0065;
 
   /* ---------- 几何小工具 ---------- */
@@ -924,6 +1069,17 @@ SM.World = (function () {
     var ff = new THREE.Points(fg, new THREE.PointsMaterial({ color: 0x9fe0a0, size: .35, transparent: true, opacity: .7, blending: THREE.AdditiveBlending, depthWrite: false })); scene.add(ff); forestFire = ff;
   }
   var forestFire = null;
+  /* 第三部：河升入太空——两岸星云、远处掩体太空城、脚下虚空星尘 */
+  function buildSpace(b) {
+    var u0 = b / NB, u1 = (b + 1) / NB;
+    for (var i = 0; i < 14; i++) { var u = u0 + Math.random() * (u1 - u0); var side = i % 2 ? 1 : -1; var p = posOn(u, side * (60 + Math.random() * 60), 20 + Math.random() * 40); scene.add(glow(30 + Math.random() * 40, [0x3a2a7a, 0x1d4a6a, 0x6a2a5a, 0x2a3a8a][i % 4], p.x, p.y, p.z, .07)); }
+    for (var k = 0; k < 10; k++) { var uu = u0 + (k + .5) / 10 * (u1 - u0); var sd = k % 2 ? 1 : -1; var g = new THREE.Group(); var c = posOn(uu, sd * (28 + Math.random() * 16), 6 + Math.random() * 10); g.position.copy(c);
+      var ring = new THREE.Mesh(new THREE.TorusGeometry(3 + Math.random() * 2, .5, 8, 24), mat(0x3a4258)); ring.rotation.x = Math.random(); ring.rotation.y = Math.random(); g.add(ring); g.add(cyl(.5, .5, 2, 0x4a5268, 0, 0, 0, 8)); g.userData.spin = .1 + Math.random() * .2; scene.add(g); spaceCities.push(g); }
+    var m = 1500, fp = new Float32Array(m * 3); for (var j = 0; j < m; j++) { var uj = u0 + Math.random() * (u1 - u0); var pp = posOn(uj, (Math.random() - .5) * 140, -4 - Math.random() * 60); fp[j * 3] = pp.x; fp[j * 3 + 1] = pp.y; fp[j * 3 + 2] = pp.z; }
+    var fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.BufferAttribute(fp, 3));
+    scene.add(new THREE.Points(fg, new THREE.PointsMaterial({ color: 0x9fb4ff, size: .5, transparent: true, opacity: .6 })));
+  }
+  var spaceCities = [];
 
   /* ---------- 岛屿微缩景观 ---------- */
   function dishMesh() { return new THREE.Mesh(new THREE.LatheGeometry([new THREE.Vector2(0, 0), new THREE.Vector2(.8, .12), new THREE.Vector2(1.5, .5), new THREE.Vector2(1.9, .95)], 16), mat(0xdedede, { side: THREE.DoubleSide })); }
@@ -959,6 +1115,21 @@ SM.World = (function () {
       case 'b2_spellhit': g.add(cyl(1.2, 1.4, 1.2, 0x7a8298, 0, .6, 0)); g.add(sph(1.25, 0x9aa2b8, 0, 1.3, 0)); g.add(cyl(.22, .22, 2.4, 0x555, .6, 2.5, 0)); var st = sph(.45, 0xffe8a0, 2.2, 4.6, -1.2, true); g.add(st); g.userData.star = st; var sg = glow(1, 0xffe8a0, 2.2, 4.6, -1.2, .3); g.add(sg); g.userData.starGlow = sg; break;
       case 'b2_law': for (var tI = 0; tI < 9; tI++) { var ang = tI / 9 * 6.28; g.add(cone(.9 + Math.random() * .5, 3.5 + Math.random() * 2, 0x0b1018, Math.cos(ang) * 3.2, 2, Math.sin(ang) * 3.2)); } g.add(cyl(.5, .7, .3, 0x3a2a1a, 0, .15, 0, 6)); var fire = glow(.7, 0xff8a3a, 0, .7, 0, .6); g.add(fire); g.userData.fire = fire; var hm = humanMini(0xb57bff, -.9, .9, .8); g.add(hm); break;
       case 'b2_snow': g.add(sph(1.1, 0xffb347, 0, 2.6, 0, true)); g.add(glow(1.9, 0xffb347, 0, 2.6, 0, .25)); for (var rI = 0; rI < 14; rI++) { var an = rI / 14 * 6.28; g.add(sph(.14, 0xffffff, Math.cos(an) * 2.6, 2.6, Math.sin(an) * 2.6, true)); } var rg = new THREE.Mesh(new THREE.TorusGeometry(2.6, .03, 6, 48), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .4 })); rg.rotation.x = Math.PI / 2; rg.position.y = 2.6; g.add(rg); break;
+      /* ---- 第三部 ---- */
+      case 'b3_star': g.add(humanMini(0xff7aa8, -.8, .6, .9)); g.add(sph(.5, 0xffb6d0, 1.6, 4.2, -1.2, true)); g.add(glow(1.1, 0xffb6d0, 1.6, 4.2, -1.2, .3)); for (var si = 0; si < 12; si++) g.add(sph(.08, 0xffffff, (Math.random() - .5) * 6, 2 + Math.random() * 4, (Math.random() - .5) * 6, true)); break;
+      case 'b3_staircase': var sl2 = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.4), new THREE.MeshBasicMaterial({ color: 0xdfe6f5, side: THREE.DoubleSide, transparent: true, opacity: .85 })); sl2.position.set(0, 2.6, 0); sl2.rotation.y = .4; g.add(sl2); g.add(sph(.18, 0xffb6d0, 0, 2.6, -.8, true)); for (var bi = 0; bi < 4; bi++) g.add(sph(.12, 0xfff1b0, -1.2 - bi * .9, 1.2 + bi * .3, 1.5 + bi * .6, true)); break;
+      case 'b3_sword': g.add(cyl(1.2, 1.4, .8, 0x3a4560, 0, .4, 0, 10)); g.add(sph(.28, 0xff3b3b, 0, 1.1, 0, true)); g.add(glow(.7, 0xff3b3b, 0, 1.1, 0, .25)); g.add(humanMini(0xb57bff, -1.6, 1, .9)); g.add(humanMini(0xff7aa8, 1.6, 1, .9)); break;
+      case 'b3_fail': g.add(cyl(.25, .4, 4, 0x8a95a8, 0, 2, 0, 8)); g.add(cyl(.9, .9, .25, 0x6a7488, 0, 4.1, 0, 8)); var dr3 = new THREE.Mesh(new THREE.SphereGeometry(.3, 14, 10), new THREE.MeshPhongMaterial({ color: 0xdfe6f0, shininess: 160, specular: 0xffffff })); dr3.position.set(2.2, 3.6, -1); g.add(dr3); g.add(humanMini(0xff7aa8, -1.4, 1.4, .9)); break;
+      case 'b3_4d': var cb = box(1.6, 1.6, 1.6, 0x8a95a8, 0, 2, 0); cb.material.transparent = true; cb.material.opacity = .35; g.add(cb); g.add(sph(.35, 0xffc94a, 0, 2, 0, true)); g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.6, 1.6, 1.6)), new THREE.LineBasicMaterial({ color: 0xffffff }))); g.children[g.children.length - 1].position.set(0, 2, 0); for (var fi = 0; fi < 8; fi++) { var sh = box(.5, .15, .5, [0xff7aa8, 0x2fd1c0, 0x9fc0ff, 0xffc94a][fi % 4], (Math.random() - .5) * 5, 1 + Math.random() * 3, (Math.random() - .5) * 5); sh.rotation.set(Math.random(), Math.random(), 0); g.add(sh); } break;
+      case 'b3_triend': g.add(cyl(1.2, 1.4, 1.2, 0x7a8298, 0, .6, 0)); g.add(sph(1.25, 0x9aa2b8, 0, 1.3, 0)); var st3 = sph(.6, 0xffd070, 2.2, 4.6, -1.2, true); g.add(st3); g.userData.star = st3; var sg3 = glow(1.3, 0xffd070, 2.2, 4.6, -1.2, .3); g.add(sg3); g.userData.starGlow = sg3; break;
+      case 'b3_tales': g.add(box(2.4, .15, 1.8, 0xf4f1ea, -.7, 1, 0)); g.add(box(2.4, .15, 1.8, 0xf4f1ea, .7, 1.05, 0)); g.children[g.children.length - 2].rotation.z = .18; g.children[g.children.length - 1].rotation.z = -.18; g.add(cyl(.3, .4, 1, 0x6a4a2a, 0, .5, 0, 6)); g.add(sph(.2, 0xffd36b, -.6, 1.6, .2, true)); g.add(sph(.2, 0x7fd0ff, .2, 1.8, -.2, true)); g.add(sph(.2, 0xc9a0d0, .9, 1.5, .3, true)); break;
+      case 'b3_bunker': g.add(sph(.6, 0xffb347, 0, 2, 0, true)); [[2.2, .45, 0xc9a06a], [3.1, .35, 0xe0c890]].forEach(function (p, i) { var ang = .6 + i * 1.4; var pl = sph(p[1], p[2], Math.cos(ang) * p[0], 2, Math.sin(ang) * p[0]); g.add(pl); for (var ci = 0; ci < 3; ci++) g.add(box(.12, .12, .3, 0xcfd6ff, Math.cos(ang) * (p[0] + .8) + (Math.random() - .5) * .5, 2 + (Math.random() - .5) * .5, Math.sin(ang) * (p[0] + .8) + (Math.random() - .5) * .5)); }); break;
+      case 'b3_wade': var rng = new THREE.Mesh(new THREE.TorusGeometry(1.8, .35, 8, 28), mat(0x8a95a8)); rng.position.y = 2.2; rng.rotation.x = .5; g.add(rng); g.add(cyl(.35, .35, .8, 0x6a7488, 0, 2.2, 0, 8)); g.add(humanMini(0x5a6070, -1.6, 1.6, .9)); break;
+      case 'b3_singer': var sg4 = glow(1, 0xcfd3de, -1, 2, 0, .45); g.add(sg4); g.userData.singer = sg4; var fl = new THREE.Mesh(new THREE.PlaneGeometry(.6, .4), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })); fl.position.set(1.2, 2.4, .5); fl.rotation.y = .6; g.add(fl); break;
+      case 'b3_flat': var pcv = document.createElement('canvas'); pcv.width = 256; pcv.height = 256; var pg = pcv.getContext('2d'); pg.fillStyle = '#0b1a4a'; pg.fillRect(0, 0, 256, 256); for (var pi = 0; pi < 160; pi++) { pg.strokeStyle = ['#2f6fb8', '#8fb8e8', '#ffd36b', '#1e3f8a'][pi % 4]; pg.lineWidth = 2 + Math.random() * 3; var a0 = Math.random() * 6.28; pg.beginPath(); pg.arc(Math.random() * 256, Math.random() * 256, 6 + Math.random() * 20, a0, a0 + 2); pg.stroke(); } pg.fillStyle = '#ffd36b'; pg.beginPath(); pg.arc(128, 128, 14, 0, 7); pg.fill(); var ptex = new THREE.CanvasTexture(pcv); var pm = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 6.4), new THREE.MeshBasicMaterial({ map: ptex, side: THREE.DoubleSide })); pm.rotation.x = -Math.PI / 2; pm.position.y = .08; g.add(pm); var shp = box(.3, .15, .8, 0xffb6d0, 2.6, 1.2, 2.6); g.add(shp); break;
+      case 'b3_blue': g.add(sph(1.4, 0x3f8fd8, -1.4, 1.8, 0)); g.add(sph(.7, 0x8a8f98, 2, 1.4, -1)); var dl = box(.04, .04, 5, 0xffffff, 2.6, 2.6, 0); dl.material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5 }); dl.rotation.y = .5; g.add(dl); break;
+      case 'b3_647': g.add(box(2.6, 1.4, .6, 0x6a6a6a, -.8, .7, 0)); var dr4 = new THREE.Mesh(new THREE.PlaneGeometry(1, 1.9), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .8, side: THREE.DoubleSide })); dr4.position.set(1.8, .95, 0); g.add(dr4); g.add(box(.1, 2, .1, 0x3a3a4a, 1.25, 1, 0)); g.add(box(.1, 2, .1, 0x3a3a4a, 2.35, 1, 0)); break;
+      case 'b3_end': g.add(cyl(3.4, 3.6, .3, 0x7fb86a, 0, .15, 0, 10)); g.add(box(1.4, .9, 1.1, 0xe8e0d0, -1.6, .75, -.6)); g.add(cone(1.1, .6, 0x9a5a4a, -1.6, 1.5, -.6)); var eb = sph(.3, 0x7fd0ff, .8, .6, .8); eb.material.transparent = true; eb.material.opacity = .8; g.add(eb); g.add(glow(.6, 0x9fe0ff, .8, .6, .8, .3)); g.add(box(.08, 1.8, .08, 0x3a3a4a, 2, .9, -.6)); g.add(box(.08, 1.8, .08, 0x3a3a4a, 2.8, .9, -.6)); g.add(box(.9, .08, .08, 0x3a3a4a, 2.4, 1.8, -.6)); break;
       case 'b2_deterrence': g.add(cyl(3.6, 3.8, .2, 0xe8ecf4, 0, .1, 0, 10)); var man = humanMini(0x3a3f55, 0, .4, 1.1); g.add(man); var sw = sph(.16, 0xff3b3b, .35, 1.0, .3, true); g.add(sw); g.userData.sw = sw; var dsm = new THREE.MeshPhongMaterial({ color: 0xdfe6f0, shininess: 160, specular: 0xffffff }); var dd = new THREE.Mesh(new THREE.SphereGeometry(.35, 16, 12), dsm); dd.position.set(1.8, 4.2, -1.5); g.add(dd); g.add(cone(.7, 2, 0x1a2a2a, -2.6, 1.1, -1.2)); g.add(cone(.6, 1.6, 0x1a2a2a, 2.4, .9, 1.6)); break;
     }
     return g;
@@ -972,12 +1143,12 @@ SM.World = (function () {
       var side = isl.line === 'merge' ? (li % 2 ? 1 : -1) : (off >= 0 ? 1 : -1);
       var lateral = off + side * 7.5; isl.lateral = lateral; isl.side = side;
       var pos = posOn(u, lateral, 0); var g = new THREE.Group(); g.position.copy(pos);
-      var plat = cyl(4.2, 3.2, 1.4, b === 0 ? 0x1c2236 : 0x141a22, 0, -.7, 0, 9); g.add(plat);
+      var plat = cyl(4.2, 3.2, 1.4, b === 0 ? 0x1c2236 : b === 1 ? 0x141a22 : 0x1a1e34, 0, -.7, 0, 9); g.add(plat);
       g.add(cyl(2.4, .4, 2.4, 0x141a2c, 0, -2.6, 0, 7));
       var ringC = SM.LINES[isl.line].color;
       var rg = new THREE.Mesh(new THREE.TorusGeometry(4.5, .09, 8, 48), new THREE.MeshBasicMaterial({ color: ringC, transparent: true, opacity: .85 })); rg.rotation.x = Math.PI / 2; rg.position.y = .05; g.add(rg); isl.ring = rg;
       var d = diorama(isl.id); g.add(d); isl.dio = d;
-      if (b >= 1) { var pl = new THREE.PointLight(0xff9a4a, 1.2, 16); pl.position.set(0, 2, 0); g.add(pl); isl.fireLight = pl; var fg = glow(.5, 0xff9a4a, 2.6, .5, 2.2, .5); g.add(fg); isl.fireGlow = fg; g.add(cyl(.35, .5, .25, 0x3a2a1a, 2.6, .12, 2.2, 6)); }
+      if (b === 1) { var pl = new THREE.PointLight(0xff9a4a, 1.2, 16); pl.position.set(0, 2, 0); g.add(pl); isl.fireLight = pl; var fg = glow(.5, 0xff9a4a, 2.6, .5, 2.2, .5); g.add(fg); isl.fireGlow = fg; g.add(cyl(.35, .5, .25, 0x3a2a1a, 2.6, .12, 2.2, 6)); }
       var lb = label('第' + (li + 1) + '站 · ' + isl.title, SM.LINES[isl.line].css, .7); lb.position.set(0, 7.6, 0); g.add(lb); isl.label = lb;
       var br = box(Math.abs(side * 7.5) - 3.6, .06, 1.2, ringC, 0, 0, 0); br.material = new THREE.MeshBasicMaterial({ color: ringC, transparent: true, opacity: .35 });
       var lat = latAt(u); var mid = posOn(u, off + side * (3.6 + (7.5 - 3.6) / 2), 0.03);
@@ -1032,7 +1203,7 @@ SM.World = (function () {
     scene.add(new THREE.HemisphereLight(0x8ea0ff, 0x1a1020, .9));
     var sun = new THREE.DirectionalLight(0xffffff, .55); sun.position.set(80, 120, -60); scene.add(sun);
     buildCurve(); buildStars(); buildRiverBed(); buildRibbons();
-    SM.BOOKS.forEach(function (B, b) { if (B.theme === 'forest') buildForest(b); });
+    SM.BOOKS.forEach(function (B, b) { if (B.theme === 'forest') buildForest(b); if (B.theme === 'space') buildSpace(b); });
     buildIslands(); buildGates(); buildPlayer();
     var p0 = posOn(playerT, 0, 0); camPos.copy(p0).add(new THREE.Vector3(-10, 6, 0)); camLook.copy(p0);
     window.addEventListener('keydown', function (e) { keys[e.key.toLowerCase()] = true; });
@@ -1090,8 +1261,10 @@ SM.World = (function () {
       if (ud.fire) ud.fire.material.opacity = .45 + .2 * Math.sin(T * 10);
       if (ud.exhaust) ud.exhaust.material.opacity = .3 + .2 * Math.sin(T * 14);
       if (ud.star) { var on = Math.sin(T * .7) > -0.6; ud.star.visible = on; ud.starGlow.visible = on; }
-      if (ud.sw) ud.sw.material.color.setHex(Math.sin(T * 6) > 0 ? 0xff3b3b : 0x5a1010); });
+      if (ud.sw) ud.sw.material.color.setHex(Math.sin(T * 6) > 0 ? 0xff3b3b : 0x5a1010);
+      if (ud.singer) ud.singer.material.opacity = .3 + .15 * Math.sin(T * 2.5) + .1 * Math.sin(T * 7); });
     if (forestFire) forestFire.material.opacity = .45 + .25 * Math.sin(T * 1.7);
+    spaceCities.forEach(function (g) { g.rotation.y += dt * g.userData.spin; });
     updateFlows(dt);
     var near = (nr.d < 0.012 / NB) ? nr.isl : null; if (onNear) onNear(near);
     var ahead = islands.filter(function (i) { return i.u >= playerT - 0.012 / NB; })[0]; var line = ahead ? ahead.line : 'merge';
@@ -2039,6 +2212,373 @@ SM.Islands = {};
 
 </script>
 <script>
+/* 第三部《死神永生》14 座岛的舞台场景与互动 */
+(function () {
+  var PI = Math.PI;
+  function lights(api, amb, dir, dirPos) { var a = new THREE.HemisphereLight(0xbfd0ff, 0x2a2030, amb || .8); api.scene.add(a); var d = new THREE.DirectionalLight(0xffffff, dir || .7); d.position.set.apply(d.position, dirPos || [10, 20, 10]); api.scene.add(d); return { amb: a, dir: d }; }
+  function rangeInput(min, max, val) { var r = document.createElement('input'); r.type = 'range'; r.min = min; r.max = max; r.value = val; return r; }
+  function pickInteract(api, prompt, options, reveal) {
+    return api.interact(prompt, function (els, finish) {
+      options.forEach(function (op, i) { var b = api.btn(op, i === 0); b.style.cssText = 'min-width:200px;text-align:left;font-size:17px'; els.opts.appendChild(b); b.onclick = function () { els.opts.innerHTML = ''; els.note.textContent = typeof reveal === 'function' ? reveal(op, i) : reveal; var c = api.btn('继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(op); }; }; });
+    });
+  }
+  function spaceBase(api, n) { api.scene.background = new THREE.Color(0x02030a); api.scene.add(api.H.stars(n || 2000, 700, -300)); }
+
+  /* 1 云天明的星星：星图点选 */
+  SM.Islands.b3_star = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 2500); lights(api, .5, .3, [0, 10, 10]);
+    S.add(H.ground(0x0a0d18, 300)); S.add(H.box(2.4, 1.2, 1.2, 0x2a3350, 0, .6, -4)); S.add(H.human(0xff7aa8, -1.2, -1, 1)); S.add(H.human(0x5a5a6a, 1.3, -1.5, 1));
+    var target = H.sph(.9, 0xffb6d0, 60, 70, -220, true); target.material.transparent = true; target.material.opacity = .45; S.add(target); var tg = H.glow(2.4, 0xffb6d0, 60, 70, -220, 0); S.add(tg);
+    var lb = H.label('DX3906', '#ffb6d0', 1, 'bold 80px'); lb.position.set(60, 80, -220); lb.material.opacity = 0; S.add(lb);
+    api.camera.position.set(0, 3, 8); api.camera.lookAt(10, 30, -120);
+    var found = false;
+    return {
+      update: function (dt, t) { if (found) { tg.material.opacity = .3 + .15 * Math.sin(t * 3); target.material.opacity = 1; lb.material.opacity = Math.min(1, lb.material.opacity + dt); } },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var cv = document.createElement('canvas'); cv.width = 560; cv.height = 300; cv.style.cssText = 'background:#05070f;border-radius:10px;max-width:100%;cursor:crosshair'; els.body.appendChild(cv); var g = cv.getContext('2d');
+          var stars = []; for (var i = 0; i < 70; i++) stars.push([20 + Math.random() * 520, 20 + Math.random() * 260, 1 + Math.random() * 1.6]); var T = [380 + Math.random() * 100, 80 + Math.random() * 120];
+          var done = false;
+          function draw(tm) { g.fillStyle = '#05070f'; g.fillRect(0, 0, 560, 300); stars.forEach(function (s) { g.fillStyle = 'rgba(255,255,255,.85)'; g.beginPath(); g.arc(s[0], s[1], s[2], 0, 7); g.fill(); }); g.fillStyle = done ? '#ffb6d0' : 'rgba(255,182,208,.85)'; g.beginPath(); g.arc(T[0], T[1], done ? 5 : 2.2, 0, 7); g.fill(); if (done) { g.strokeStyle = '#ffb6d0'; g.lineWidth = 2; g.beginPath(); g.arc(T[0], T[1], 14 + 4 * Math.sin(tm / 300), 0, 7); g.stroke(); g.fillStyle = '#ffb6d0'; g.font = '16px sans-serif'; g.fillText('DX3906 · 286 光年', T[0] + 20, T[1] + 5); } }
+          var anim = setInterval(function () { draw(Date.now()); }, 100); draw(0);
+          cv.onclick = function (e) { if (done) return; var r = cv.getBoundingClientRect(); var x = (e.clientX - r.left) * 560 / r.width, y = (e.clientY - r.top) * 300 / r.height; if (Math.hypot(x - T[0], y - T[1]) < 24) { done = true; found = true; els.note.textContent = '就是它。一颗没有人署名的礼物。'; var b = api.btn(api.island.interact.btn, true); els.opts.appendChild(b); b.onclick = function () { clearInterval(anim); finish(true); }; } else { els.note.textContent = '不是这颗。它比别的星微微发粉，在右边一点。'; } };
+        });
+        await api.say(api.kid ? '程心那时并不知道这颗星会有什么用。她只是常常抬头找它。' : '在三部曲的时间尺度上，这颗星是为数不多"从头到尾都在"的东西。程心后来飞了 286 光年去见它。');
+      }
+    };
+  };
+
+  /* 2 阶梯计划：引爆核弹推帆 */
+  SM.Islands.b3_staircase = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 2000); lights(api, .6, .9, [-20, 10, 20]);
+    var sail = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), H.basic(0xdfe6f5, { side: THREE.DoubleSide, transparent: true, opacity: .85 })); sail.position.set(0, 0, -10); S.add(sail);
+    var cap = H.sph(.35, 0xffb6d0, 0, 0, -13, true); S.add(cap); for (var i = 0; i < 4; i++) { var ln = H.box(.03, .03, 3, 0xffffff, (i % 2 ? 2.8 : -2.8), (i < 2 ? 2.8 : -2.8), -11.5); S.add(ln); }
+    var bombs = []; for (var k = 0; k < 8; k++) { var b = H.sph(.2, 0xffffff, (Math.random() - .5) * 3, (Math.random() - .5) * 3, 4 + k * 10, true); S.add(b); bombs.push(b); }
+    var flash = H.glow(.5, 0xfff1b0, 0, 0, 0, 0); S.add(flash);
+    var earth = H.sph(14, 0x2f6fb8, 0, -20, 60); S.add(earth);
+    api.camera.position.set(12, 4, 6); api.camera.lookAt(0, 0, -10);
+    var v = 0, exploded = 0, ft = 0;
+    return {
+      update: function (dt, t) { sail.position.z -= v * dt; cap.position.z = sail.position.z - 3; if (ft > 0) { ft -= dt; flash.material.opacity = Math.max(0, ft * 1.5); flash.scale.setScalar(1 + (1 - ft) * 12); } api.camera.position.z = sail.position.z + 16; api.camera.position.x = 12; api.camera.lookAt(0, 0, sail.position.z); },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var b = api.btn(api.island.interact.btn, true); b.style.cssText = 'font-size:26px;padding:18px 50px'; els.opts.appendChild(b);
+          b.onclick = function () { exploded++; v += 6; ft = .6; flash.position.set(0, 0, sail.position.z + 3); els.note.textContent = exploded < 5 ? '第 ' + exploded + ' 级：光帆又快了一些。' : '第五级。探测器飞向了三体舰队的方向——上面只有一个人的大脑。'; if (exploded >= 5) { b.disabled = true; setTimeout(function () { finish(true); }, 3500); } };
+        });
+        await api.say(api.kid ? '后来出了意外，探测器飞歪了，谁也不知道它去了哪里。程心去冬眠，等着也许永远不会来的消息。' : '第四级核弹引爆后帆索断裂，探测器偏离航线失联。程心作为联络人进入冬眠——这一等，就是两百多年。');
+      }
+    };
+  };
+
+  /* 3 执剑人交接：选人 */
+  SM.Islands.b3_sword = function (api) {
+    var H = api.H, S = api.scene; S.background = new THREE.Color(0x101a2a); S.fog = new THREE.Fog(0x101a2a, 30, 140);
+    lights(api, .9, .6, [-10, 20, 10]);
+    S.add(H.ground(0x1a2538, 300)); S.add(H.cyl(2, 2.4, 1.2, 0x3a4560, 0, .6, -6, 12)); var sw = H.sph(.35, 0xff3b3b, 0, 1.6, -6, true); S.add(sw); S.add(H.glow(.9, 0xff3b3b, 0, 1.6, -6, .25));
+    S.add(H.human(0x5a6070, -4, -4, 1.1)); S.add(H.human(0xff7aa8, 4, -4, 1)); S.add(H.human(0x8a8aa0, 0, -3, 1.1));
+    var l1 = H.label('维德', '#cfd6ff', .5, 'bold 80px'); l1.position.set(-4, 2.6, -4); S.add(l1); var l2 = H.label('程心', '#ffb6d0', .5, 'bold 80px'); l2.position.set(4, 2.6, -4); S.add(l2); var l3 = H.label('罗辑', '#b57bff', .5, 'bold 80px'); l3.position.set(0, 2.6, -3); S.add(l3);
+    for (var r = 0; r < 5; r++) for (var c = 0; c < 16; c++) S.add(H.human(0x2a3350, -15 + c * 2, 3 + r * 2, .8));
+    api.camera.position.set(0, 4, 11); api.camera.lookAt(0, 1.5, -6);
+    return {
+      update: function (dt, t) { sw.material.color.setHex(Math.sin(t * 4) > 0 ? 0xff3b3b : 0x7a1a1a); },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        var r = await pickInteract(api, api.island.interact.prompt, api.island.interact.options, function (op, i) { return i === 0 ? '你选了维德。在书里，人类选了程心——大家不愿意再被一个"随时会按下去"的人保护。' : '你和书里的人类一样，选了程心。三体世界一直在等这一刻。'; });
+        this.result = r;
+        await api.say(api.kid ? '罗辑把开关交给了程心。他守了五十四年，终于可以休息了。可是十几分钟后——' : '罗辑交出开关，结束了 54 年的执剑生涯。交接仪式结束后不到一刻钟，三体世界的水滴动了。');
+      }
+    };
+  };
+
+  /* 4 威慑失败：十秒倒计时 */
+  SM.Islands.b3_fail = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 1500); lights(api, .6, .6, [10, 20, 10]);
+    S.add(H.ground(0x1a1f2c, 300)); var tower = H.cyl(.8, 1.2, 14, 0x8a95a8, 0, 7, -30, 8); S.add(tower); S.add(H.cyl(2.4, 2.4, .6, 0x6a7488, 0, 14.3, -30, 8));
+    var dm = new THREE.MeshPhongMaterial({ color: 0xe8eef6, shininess: 200, specular: 0xffffff }); var drops = []; for (var i = 0; i < 3; i++) { var d = new THREE.Group(); var ds = new THREE.Mesh(new THREE.SphereGeometry(.5, 20, 16), dm); d.add(ds); var dc = new THREE.Mesh(new THREE.ConeGeometry(.5, 1.5, 20), dm); dc.rotation.z = PI / 2; dc.position.x = .8; d.add(dc); d.position.set(60 + i * 15, 18 + i * 6, -60 - i * 20); d.lookAt(0, 14, -30); S.add(d); drops.push(d); }
+    S.add(H.human(0xff7aa8, 0, -2, 1)); var sw = H.sph(.25, 0xff3b3b, .5, 1.2, -1.8, true); S.add(sw);
+    var waves = []; for (var w = 0; w < 4; w++) { var rg = new THREE.Mesh(new THREE.TorusGeometry(1, .1, 8, 40), H.basic(0x9fc0ff, { transparent: true, opacity: 0 })); rg.position.set(0, 14.3, -30); rg.rotation.x = PI / 2; S.add(rg); waves.push(rg); }
+    api.camera.position.set(6, 4, 8); api.camera.lookAt(0, 8, -30);
+    var moving = false, pressed = null, wt = 0, fallen = false;
+    return {
+      update: function (dt, t) {
+        if (moving) drops.forEach(function (d) { d.position.lerp(new THREE.Vector3(0, 14.3, -30), dt * .5); });
+        if (pressed === true) { wt += dt; waves.forEach(function (w, i) { var p = ((wt * .4 + i * .25) % 1); w.scale.setScalar(1 + p * 40); w.material.opacity = .8 - p * .8; }); }
+        if (pressed === false && !fallen) { tower.rotation.z += dt * .6; tower.position.y -= dt * 2; if (tower.position.y < -4) fallen = true; }
+      },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        var I = api.island.interact; var res = await api.interact(I.prompt, function (els, finish) {
+          var big = document.createElement('div'); big.style.cssText = 'font-size:64px;font-family:"Courier New",monospace;color:#ff4b4b;text-shadow:0 0 18px #f00;margin:4px 0 10px'; big.textContent = '10.0'; els.body.appendChild(big); moving = true;
+          var t0 = Date.now(), timer = setInterval(function () { var left = Math.max(0, 10 - (Date.now() - t0) / 1000); big.textContent = left.toFixed(1); if (left <= 0) { clearInterval(timer); decide(false, true); } }, 100);
+          function decide(press, timeout) { clearInterval(timer); els.opts.innerHTML = ''; pressed = press; els.note.textContent = press ? '你按下去了——引力波广播发出，三体与地球一起暴露。在书里，程心没有按。' : (timeout ? '时间到了。你没有按——程心也没有。' : '你没有按。程心也没有。') + ' 水滴撞毁了发射台，威慑结束了。'; var c = api.btn('继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(press ? '按下去' : '不按'); }; }
+          I.options.forEach(function (op, i) { var b = api.btn(op, i === 0); els.opts.appendChild(b); b.onclick = function () { decide(i === 0, false); }; });
+        });
+        this.result = res;
+        await api.say(api.kid ? '程心后来一直在想：那一刻她是对是错？这个问题，书里没有给答案。' : '三体世界用十几分钟证明了他们对程心的判断。之后是大移民、澳大利亚——人类最黑暗的几年。而程心是否"错了"，全书始终没有给出一个简单的答案。');
+      }
+    };
+  };
+
+  /* 5 万有引力号·四维碎块 */
+  SM.Islands.b3_4d = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 2500); lights(api, .7, .8, [10, 10, 10]);
+    var cubeG = new THREE.Group(); var shell = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), H.mat(0x8a95a8, { transparent: true, opacity: 1 })); cubeG.add(shell);
+    var edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3, 3, 3)), new THREE.LineBasicMaterial({ color: 0xffffff })); cubeG.add(edges);
+    var core = H.sph(.6, 0xffc94a, 0, 0, 0, true); core.material.transparent = true; core.material.opacity = 0; cubeG.add(core); var inner = H.box(1.2, .6, 1.2, 0x2fd1c0, 0, -.9, 0); inner.material.transparent = true; inner.material.opacity = 0; cubeG.add(inner);
+    cubeG.position.set(0, 0, -6); S.add(cubeG);
+    var ship = new THREE.Group(); ship.add(H.box(3, .6, 8, 0x8a95a8, 0, 0, 0)); ship.add(H.cyl(1.2, 1.2, .2, 0xcfd6ff, 0, 1.2, -2, 16)); ship.position.set(-12, -3, -30); S.add(ship);
+    var waves = []; for (var w = 0; w < 4; w++) { var rg = new THREE.Mesh(new THREE.TorusGeometry(1, .1, 8, 40), H.basic(0x9fc0ff, { transparent: true, opacity: 0 })); rg.position.copy(ship.position); S.add(rg); waves.push(rg); }
+    // 四维感：漂浮的彩色碎块
+    var shards = []; for (var i = 0; i < 40; i++) { var s = H.box(.4 + Math.random(), .2, .4 + Math.random(), [0xff7aa8, 0xffc94a, 0x2fd1c0, 0x9fc0ff][i % 4], (Math.random() - .5) * 50, (Math.random() - .5) * 30, -20 - Math.random() * 50); s.material.transparent = true; s.material.opacity = 0; S.add(s); shards.push(s); }
+    api.camera.position.set(0, 2, 2); api.camera.lookAt(0, 0, -6);
+    var k4 = 0, bc = false, wt = 0;
+    return {
+      update: function (dt, t) { cubeG.rotation.y += dt * .4; cubeG.rotation.x = Math.sin(t * .3) * .3; shell.material.opacity = 1 - k4 * .85; core.material.opacity = k4; inner.material.opacity = k4; shards.forEach(function (s, i) { s.material.opacity = k4 * .8; s.rotation.x += dt * .3; s.position.y += Math.sin(t + i) * dt * .2; }); if (bc) { wt += dt; waves.forEach(function (w, i) { var p = ((wt * .4 + i * .25) % 1); w.scale.setScalar(1 + p * 60); w.material.opacity = .8 - p * .8; }); } },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var r = rangeInput(0, 100, 0); els.body.appendChild(r); var b = api.btn(api.island.interact.btn, true); b.disabled = true; els.opts.appendChild(b);
+          els.note.textContent = '拖动滑块，像书里的人一样"从第四个方向"看它。';
+          r.oninput = function () { k4 = r.value / 100; els.note.textContent = k4 < .3 ? '普通的立方体。' : k4 < .7 ? '边开始透明了……你看见了里面的东西。' : '里面、外面，同时看见——这就是四维空间里的三维物体。'; if (k4 > .9) b.disabled = false; };
+          b.onclick = function () { b.disabled = true; bc = true; els.note.textContent = '引力波天线启动。三体世界的坐标，传向全宇宙。'; setTimeout(function () { finish(true); }, 4200); };
+        });
+        await api.say(api.kid ? '广播发出去了。三体人知道自己完了，他们的舰队开始逃跑。地球上的人，从澳大利亚回家了。' : '广播纪元开始。三体舰队放弃太阳系，人类从澳大利亚返回家园。但所有人都明白：地球的位置同样暴露了，打击迟早会来。');
+      }
+    };
+  };
+
+  /* 6 三体世界的毁灭：观测 */
+  SM.Islands.b3_triend = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 2500); lights(api, .5, .4, [0, 10, 10]);
+    S.add(H.ground(0x0a0d18, 300)); S.add(H.cyl(3, 3.4, 3, 0x3a4050, -10, 1.5, -20, 12)); S.add(H.sph(3.2, 0x4a5060, -10, 3.2, -20));
+    var star = H.sph(2, 0xffd070, 40, 50, -160, true); S.add(star); var sg = H.glow(4, 0xffd070, 40, 50, -160, .3); S.add(sg);
+    var pho = H.sph(.3, 0xffffff, -200, 120, -300, true); pho.visible = false; S.add(pho); var trail = H.glow(.6, 0xffffff, 0, 0, 0, 0); S.add(trail);
+    var sophon = H.human(0xf1d9c0, 1.5, -2, 1); S.add(sophon); S.add(H.human(0xff7aa8, -1, -1.5, 1));
+    api.camera.position.set(0, 3, 8); api.camera.lookAt(20, 30, -120);
+    var phase = 0, pt = 0;
+    return {
+      update: function (dt, t) { if (phase === 1) { pt += dt; pho.visible = true; pho.position.lerpVectors(new THREE.Vector3(-200, 120, -300), star.position, Math.min(1, pt / 2.2)); trail.position.copy(pho.position); trail.material.opacity = .5; if (pt > 2.2) { phase = 2; pt = 0; } } else if (phase === 2) { pt += dt; pho.visible = false; trail.material.opacity = 0; var k = Math.min(1, pt / 3); star.scale.setScalar(1 + k * 12); sg.scale.setScalar(1 + k * 10); star.material.opacity = 1 - k; star.material.transparent = true; sg.material.opacity = .3 * (1 - k); if (k >= 1) { star.visible = false; sg.visible = false; } } },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var b = api.btn(api.island.interact.btn, true); els.opts.appendChild(b);
+          b.onclick = function () { b.disabled = true; phase = 1; els.note.textContent = '一粒光粒，从宇宙深处来。'; setTimeout(function () { els.note.textContent = '三体的太阳爆发了。三体世界，没有了。'; }, 3000); setTimeout(function () { els.note.textContent = '智子对人类说：再见。你们的结局，不会比我们好多少。'; }, 6000); setTimeout(function () { finish(true); }, 9000); };
+        });
+        await api.say(api.kid ? '人类从这件事里学到了打击的样子：光粒打太阳。他们开始准备。可是——还有一个人要见程心。' : '人类第一次亲眼看见黑暗森林打击的形态，并据此准备掩体计划。与此同时，三体方面传来消息：有人要见程心。');
+      }
+    };
+  };
+
+  /* 7 云天明的三个童话：三幕配对 */
+  SM.Islands.b3_tales = function (api) {
+    var H = api.H, S = api.scene; S.background = new THREE.Color(0x15121f); S.fog = new THREE.Fog(0x15121f, 30, 120);
+    var Lt = lights(api, .9, .6, [-10, 20, 10]);
+    S.add(H.ground(0x221d33, 300));
+    // 三个微缩舞台：画师、海与帆、水下王子
+    var st1 = new THREE.Group(); st1.add(H.box(2.2, 2.8, .15, 0xf4f1ea, 0, 1.6, 0)); st1.add(H.box(.12, 2.4, .12, 0x6a4a2a, -1.2, 1.2, .3)); st1.add(H.human(0x8a6a9a, 1.6, 1, .9)); var painted = H.human(0xc9a0d0, 0, 0, .8); painted.position.set(0, .5, .2); painted.scale.z = .05; st1.add(painted); st1.position.set(-9, 0, -8); S.add(st1);
+    var st2 = new THREE.Group(); st2.add(H.plane(7, 5, 0x2a4a8a, 0, .05, 0)); var sail = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.4), H.basic(0xffffff, { side: THREE.DoubleSide })); sail.position.set(0, 2.6, 0); st2.add(sail); st2.add(H.box(.08, 2.6, .08, 0x6a4a2a, -.8, 2.2, 0)); st2.add(H.box(1.6, .3, .6, 0x6a4a2a, 0, 1.3, 0)); st2.position.set(0, 0, -8); S.add(st2);
+    var st3 = new THREE.Group(); var water = H.box(5, 3, 3, 0x2a6a9a, 0, 1.5, 0); water.material.transparent = true; water.material.opacity = .45; st3.add(water); st3.add(H.human(0xf1e1b0, 0, 0, 1)); var crown = H.cyl(.25, .3, .25, 0xffd36b, 0, 1.45, 0, 6); st3.add(crown); st3.position.set(9, 0, -8); S.add(st3);
+    var spots = [st1, st2, st3].map(function (g) { var sp = new THREE.PointLight(0xffe8b0, 0, 18); sp.position.set(g.position.x, 5, g.position.z + 3); S.add(sp); return sp; });
+    api.camera.position.set(0, 4, 8); api.camera.lookAt(0, 1.5, -8);
+    var act = -1;
+    return {
+      update: function (dt, t) { spots.forEach(function (sp, i) { sp.intensity += ((i === act ? 2.2 : .25) - sp.intensity) * dt * 3; }); [st1, st2, st3].forEach(function (g, i) { g.position.y = i === act ? Math.sin(t * 2) * .08 : 0; }); if (act === 1) sail.rotation.y = Math.sin(t) * .3; },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        var acts = [
+          { title: '第一个童话：王国的新画师', text: api.kid ? '国王的新画师有一种神奇的画法：他把谁画进画里，谁就真的变成了画——只剩薄薄的一张。' : '一位新来的画师用一种特殊的纸与笔作画：被画进画里的人，本人就会消失，只留在平面的画中。', ans: 0, hint: '"变成一张画"——是变薄、变平。' },
+          { title: '第二个童话：饕餮海与空中之帆', text: api.kid ? '海里有吃掉一切的怪鱼，谁也过不去。可是有一种神奇的肥皂，把它抹在帆上，船就能在空中滑过去，比什么都快。' : '一片无法横渡的海。主角得到一种来自远方的肥皂，涂在船帆上，船便悬浮、滑行，速度极快——但船后会留下一道痕迹。', ans: 1, hint: '"抹在帆上就能飞快滑行"——是一种新的"推进"。' },
+          { title: '第三个童话：深水王子', text: api.kid ? '有一位王子，不管离他多远看他，他都一样大，一点也不会变小——就像在水底一样。' : '一位王子无论远近看上去都不会变形、不会缩小——光在他周围的行为变了。', ans: 2, hint: '"光变得不一样了"——把光速改掉。' }
+        ];
+        var opts = ['二维化——把人和世界压成平面', '光速飞船——曲率驱动', '黑域——降低光速'];
+        var log = [];
+        for (var a = 0; a < 3; a++) { act = a; var A = acts[a];
+          await api.say(A.text, { label: A.title });
+          api.hideSub();
+          await api.interact(A.title + '——它在暗示什么？', function (els, finish) {
+            opts.forEach(function (op, i) { var b = api.btn(op); b.style.cssText = 'min-width:220px;font-size:16px'; els.opts.appendChild(b); b.onclick = function () { if (i === A.ans) { els.opts.innerHTML = ''; els.note.textContent = ['对。人类后来才明白：这是在说"二维化"——降维打击。', '对。肥皂和空中之帆说的是曲率驱动的光速飞船——船后的痕迹就是航迹。', '对。在光速被降低的区域里，光的行为会变——这是"黑域"：把自己关进安全的笼子。'][i]; log.push(op); var c = api.btn(a < 2 ? '下一个童话 ▶' : '继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(true); }; } else { els.note.textContent = '再想想。' + A.hint; } }; });
+          });
+        }
+        act = -1; this.result = '三个童话都猜对了';
+        await api.say(api.kid ? '三个秘密都藏在童话里。人类猜出了一些，也猜错了一些。最先被相信的，是"光粒打太阳"那一种。' : '人类破译出二维化、光速飞船、黑域三条线索，却把防御重心押在"光粒打击"上——因为那是他们亲眼见过的方式。');
+      }
+    };
+  };
+
+  /* 8 掩体计划：摆太空城 */
+  SM.Islands.b3_bunker = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 2000); lights(api, .5, .2, [0, 30, 0]);
+    var sun = H.sph(3, 0xffb347, 0, 0, 0, true); S.add(sun); S.add(H.glow(6, 0xffb347, 0, 0, 0, .25)); var sl = new THREE.PointLight(0xffd080, 1.5, 200); S.add(sl);
+    var planets = [[14, 1.6, 0xc9a06a], [22, 1.4, 0xe0c890], [30, 1, 0x8fd0e0], [38, 1, 0x4a6ad0]].map(function (p, i) { var ang = .4 + i * .5; var m = H.sph(p[1], p[2], Math.cos(ang) * p[0], 0, -Math.sin(ang) * p[0]); S.add(m); var orb = new THREE.Mesh(new THREE.TorusGeometry(p[0], .03, 6, 90), H.basic(0xffffff, { transparent: true, opacity: .2 })); orb.rotation.x = PI / 2; S.add(orb); return m; });
+    var cities = []; planets.forEach(function (pl) { var g = new THREE.Group(); for (var k = 0; k < 6; k++) g.add(H.box(.35, .35, .9, 0xcfd6ff, (Math.random() - .5) * 2.4, (Math.random() - .5) * 2, (Math.random() - .5) * 2.4)); var dir = pl.position.clone().normalize(); g.position.copy(pl.position).addScaledVector(dir, 2.8); g.visible = false; S.add(g); cities.push(g); });
+    api.camera.position.set(0, 34, 36); api.camera.lookAt(0, 0, -6);
+    return {
+      update: function (dt, t) { cities.forEach(function (c) { if (c.visible) c.rotation.y += dt * .3; }); },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        var I = api.island.interact; var placed = 0;
+        await api.interact(I.prompt, function (els, finish) {
+          I.options.forEach(function (op, i) { var b = api.btn(op); els.opts.appendChild(b); b.onclick = function () { b.disabled = true; b.style.opacity = .4; cities[i].visible = true; placed++; els.note.textContent = placed < 4 ? '太空城进入了' + op.replace('背后', '') + '的影子。' : '几十座太空城，全人类都搬了进去。掩体纪元开始。'; if (placed === 4) { var c = api.btn('继续 ▶', true); els.opts.appendChild(c); c.onclick = function () { finish(true); }; } }; });
+        });
+        await api.say(api.kid ? '掩体纪元里，有一个人不相信躲起来就安全。他叫维德。' : '掩体纪元是一个安静而紧张的时代。光速飞船被禁止——只有一个人还在坚持造它：维德。');
+      }
+    };
+  };
+
+  /* 9 光速飞船与维德：选择 */
+  SM.Islands.b3_wade = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 2000); lights(api, .6, .8, [20, 20, 10]);
+    var ring = new THREE.Mesh(new THREE.TorusGeometry(8, 1.4, 12, 48), H.mat(0x8a95a8)); ring.position.set(0, 0, -30); S.add(ring); var hub = H.cyl(1.5, 1.5, 3, 0x6a7488, 0, 0, -30, 12); hub.rotation.x = PI / 2; S.add(hub);
+    for (var i = 0; i < 8; i++) { S.add(H.box(1.4, .4, 3, 0x3a4050, -24 + i * 7, -8 + (i % 2) * 3, -70)); }
+    var lab1 = H.label('星环城（维德）', '#ffb6d0', .6, 'bold 70px'); lab1.position.set(0, 11, -30); S.add(lab1); var lab2 = H.label('联邦舰队', '#cfd6ff', .5, 'bold 70px'); lab2.position.set(0, -4, -68); S.add(lab2);
+    S.add(H.human(0x5a6070, -1.2, -3, 1)); S.add(H.human(0xff7aa8, 1.2, -3, 1));
+    api.camera.position.set(0, 3, 8); api.camera.lookAt(0, 0, -40);
+    return {
+      update: function (dt, t) { ring.rotation.z += dt * .15; },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        var r = await pickInteract(api, api.island.interact.prompt, api.island.interact.options, function (op, i) { return i === 0 ? '你让他打下去。在书里，程心没有——她让维德停下，维德真的停下了。' : '你和程心做了同样的选择。维德放下了武器，被带走，后来被处决。光速飞船停了。'; });
+        this.result = r;
+        await api.say(api.kid ? '很多年以后，程心才明白：那一天她停下的，是人类唯一能逃出去的路。' : '多年后程心才完全理解那个决定的分量：她停下的不只是一场战争，还有人类离开太阳系的唯一方式。而维德的团队，在被关停前悄悄造出了一艘——星环号。');
+      }
+    };
+  };
+
+  /* 10 歌者与二向箔 */
+  SM.Islands.b3_singer = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 3000); lights(api, .3, .2, [0, 10, 10]);
+    var singer = H.glow(1.4, 0xcfd3de, -3, 1, -8, .45); S.add(singer); var sl = new THREE.PointLight(0xcfd3de, 1, 40); sl.position.set(-3, 2, -6); S.add(sl);
+    var box = H.box(1.6, .8, 1, 0x2a2f3a, 1.5, .4, -6); S.add(box);
+    var foil = new THREE.Mesh(new THREE.PlaneGeometry(.8, .5), H.basic(0xffffff, { side: THREE.DoubleSide })); foil.position.set(1.5, 1.2, -6); foil.visible = false; S.add(foil);
+    var sunFar = H.sph(.25, 0xffd070, 40, 20, -160, true); S.add(sunFar); S.add(H.glow(.8, 0xffd070, 40, 20, -160, .3));
+    api.camera.position.set(0, 2.5, 2); api.camera.lookAt(2, 1, -20);
+    var thrown = false, ft = 0;
+    return {
+      update: function (dt, t) { singer.material.opacity = .35 + .15 * Math.sin(t * 2.5) + .1 * Math.sin(t * 7); sl.intensity = .8 + .3 * Math.sin(t * 2.5); if (thrown) { ft += dt; foil.position.lerpVectors(new THREE.Vector3(1.5, 1.2, -6), sunFar.position, Math.min(1, ft / 5)); foil.rotation.x += dt * 3; foil.rotation.y += dt * 2; } },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var song = ['🎵 我看见一粒尘埃，在黑暗里发着光——', '🎵 它喊出了自己的名字，又喊出了邻居的名字——', '🎵 那就睡吧，小尘埃，睡成一张薄薄的画。'];
+          var b = api.btn(api.island.interact.btn, true); b.disabled = true; els.opts.appendChild(b);
+          song.forEach(function (l, i) { setTimeout(function () { els.note.textContent = l; if (i === song.length - 1) { foil.visible = true; b.disabled = false; } }, 600 + i * 2600); });
+          b.onclick = function () { b.disabled = true; thrown = true; els.note.textContent = '纸片飘向那个发光的小点。歌者继续哼它的歌。'; setTimeout(function () { finish(true); }, 5200); };
+        });
+        await api.say(api.kid ? '没有人知道灾难已经在路上。太阳系里的人还在太空城里过着普通的日子。' : '二向箔以光速飞向太阳系。没有人知道它正在来。掩体纪元 67 年的太阳系，正在准备迎接又一个普通的早晨。');
+      }
+    };
+  };
+
+  /* 11 太阳系二维化：世界压成一幅画 */
+  SM.Islands.b3_flat = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 2500); lights(api, .6, .4, [0, 30, 0]);
+    var world = new THREE.Group(); S.add(world);
+    var sun = H.sph(3.5, 0xffb347, 0, 0, 0, true); world.add(sun); world.add(H.glow(6, 0xffb347, 0, 0, 0, .2)); var sl = new THREE.PointLight(0xffd080, 1.5, 200); S.add(sl);
+    [[9, .7, 0xa08a6a], [13, .9, 0xe0c890], [17, 1, 0x2f6fb8], [22, .8, 0xc06a4a], [30, 2.2, 0xc9a06a], [38, 1.9, 0xe0c890], [45, 1.3, 0x8fd0e0], [52, 1.3, 0x4a6ad0]].forEach(function (p, i) { var ang = i * 1.1; world.add(H.sph(p[1], p[2], Math.cos(ang) * p[0], 0, -Math.sin(ang) * p[0])); var orb = new THREE.Mesh(new THREE.TorusGeometry(p[0], .03, 6, 100), H.basic(0xffffff, { transparent: true, opacity: .15 })); orb.rotation.x = PI / 2; world.add(orb); if (i >= 4) for (var k = 0; k < 5; k++) world.add(H.box(.4, .4, 1, 0xcfd6ff, Math.cos(ang) * (p[0] + 3) + (Math.random() - .5) * 2, (Math.random() - .5) * 2, -Math.sin(ang) * (p[0] + 3) + (Math.random() - .5) * 2)); });
+    var ship = new THREE.Group(); ship.add(H.box(.8, .4, 2.4, 0xffb6d0, 0, 0, 0)); var shipG = H.glow(1, 0xffb6d0, 0, 0, 1.6, 0); ship.add(shipG); ship.position.set(-20, 2, 10); S.add(ship);
+    // 油画平面（梵高式漩涡），压扁后浮现
+    var cv = document.createElement('canvas'); cv.width = 1024; cv.height = 1024; var g = cv.getContext('2d'); g.fillStyle = '#0b1a4a'; g.fillRect(0, 0, 1024, 1024);
+    for (var i = 0; i < 900; i++) { var cx = Math.random() * 1024, cy = Math.random() * 1024, r = 8 + Math.random() * 60, a0 = Math.random() * 6.28, len = 1 + Math.random() * 2.5; g.strokeStyle = ['#1e3f8a', '#2f6fb8', '#8fb8e8', '#ffd36b', '#ffe8a0', '#0b1a4a', '#5a8ad0'][i % 7]; g.lineWidth = 3 + Math.random() * 6; g.beginPath(); g.arc(cx, cy, r, a0, a0 + len); g.stroke(); }
+    for (var s2 = 0; s2 < 18; s2++) { var sx = Math.random() * 1024, sy = Math.random() * 1024; g.fillStyle = 'rgba(255,230,140,.85)'; g.beginPath(); g.arc(sx, sy, 10 + Math.random() * 20, 0, 7); g.fill(); for (var q = 0; q < 6; q++) { g.strokeStyle = 'rgba(255,230,140,.6)'; g.lineWidth = 4; g.beginPath(); g.arc(sx, sy, 28 + q * 9, q, q + 2.5); g.stroke(); } }
+    g.fillStyle = '#ffd36b'; g.beginPath(); g.arc(512, 512, 44, 0, 7); g.fill(); for (var q2 = 0; q2 < 12; q2++) { g.strokeStyle = 'rgba(255,211,107,.7)'; g.lineWidth = 6; g.beginPath(); g.arc(512, 512, 60 + q2 * 18, q2 * .5, q2 * .5 + 3); g.stroke(); }
+    var tex = new THREE.CanvasTexture(cv); var painting = new THREE.Mesh(new THREE.PlaneGeometry(130, 130), H.basic(0xffffff, { map: tex, transparent: true, opacity: 0, side: THREE.DoubleSide })); painting.rotation.x = -PI / 2; painting.position.y = -.3; S.add(painting);
+    var camFrom = new THREE.Vector3(30, 26, 60), camTo = new THREE.Vector3(0, 95, 0.01); api.camera.position.copy(camFrom); api.camera.lookAt(0, 0, 0);
+    var phase = 0, pt = 0;
+    return {
+      update: function (dt, t) { if (phase === 1) { pt += dt; ship.position.z -= dt * (20 + pt * 40); ship.position.x += dt * 6; shipG.material.opacity = .6; if (pt > 2) { phase = 2; pt = 0; } } else if (phase === 2) { pt += dt; var k = Math.min(1, pt / 6); var e = k < .5 ? 2 * k * k : -1 + (4 - 2 * k) * k; world.scale.y = Math.max(0.001, 1 - e); painting.material.opacity = Math.max(0, e - .5) * 2; api.camera.position.lerpVectors(camFrom, camTo, e); api.camera.lookAt(0, 0, 0); if (k >= 1) phase = 3; } else if (phase === 3) { painting.rotation.z += dt * .01; } },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var b = api.btn(api.island.interact.btn, true); b.style.cssText = 'font-size:26px;padding:18px 50px'; els.opts.appendChild(b);
+          b.onclick = function () { b.disabled = true; phase = 1; els.note.textContent = '星环号出发了。'; setTimeout(function () { els.note.textContent = '回头看——太阳系正在变成一幅画。'; }, 2200); setTimeout(function () { els.note.textContent = '行星、太空城、太阳……全都在里面了。书里说，它像梵高的《星空》。'; }, 6500); setTimeout(function () { finish(true); }, 10500); };
+        });
+        await api.say(api.kid ? '星环号上只有两个人：程心和艾AA。她们要去的地方，是云天明送的那颗星。' : '星环号上只有程心和艾AA两个人，目的地是 286 光年外的 DX3906——云天明送的那颗星。太阳系的人类文明，留在了身后那幅画里。');
+      }
+    };
+  };
+
+  /* 12 蓝星与死线 */
+  SM.Islands.b3_blue = function (api) {
+    var H = api.H, S = api.scene; spaceBase(api, 2500); lights(api, .6, .8, [20, 10, 10]);
+    var blue = H.sph(10, 0x3f8fd8, -22, -6, -50); S.add(blue); S.add(H.glow(12, 0x6fb0ff, -22, -6, -50, .12));
+    var grey = H.sph(6, 0x8a8f98, 30, 4, -90); S.add(grey);
+    var line = H.box(.08, .08, 120, 0xffffff, 30, 8, -120); line.material = H.basic(0xffffff, { transparent: true, opacity: .3 }); line.rotation.y = .4; S.add(line);
+    var ship = new THREE.Group(); ship.add(H.box(.8, .4, 2.4, 0xffb6d0, 0, 0, 0)); ship.position.set(-10, -2, -20); S.add(ship);
+    S.add(H.human(0xff7aa8, -1, -3, 1)); S.add(H.human(0x6a7a9a, 1, -3, 1));
+    api.camera.position.set(0, 2, 4); api.camera.lookAt(5, 0, -60);
+    var go = false, gt = 0;
+    return {
+      update: function (dt, t) { if (go) { gt += dt; ship.position.lerp(new THREE.Vector3(26, 6, -80), dt * .25); line.material.opacity = .3 + .3 * Math.sin(t * 6); } },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var b = api.btn(api.island.interact.btn, true); els.opts.appendChild(b);
+          b.onclick = function () { b.disabled = true; go = true; var big = document.createElement('div'); big.style.cssText = 'font-size:30px;margin:8px 0;color:#cfd6ff;font-family:"Courier New",monospace'; els.body.appendChild(big);
+            var steps = ['外面过去了 1 秒', '外面过去了 1 年', '外面过去了 100 年', '外面过去了 10000 年', '外面过去了 100 万年', '外面过去了 1890 万年']; steps.forEach(function (s, i) { setTimeout(function () { big.textContent = s; els.note.textContent = i < 2 ? '你们感觉只是一会儿……' : i < 5 ? '船里的钟几乎没动。' : '等你们回到蓝星，艾AA和云天明已经在那里度过了一生。'; }, 1500 + i * 1300); });
+            setTimeout(function () { finish(true); }, 1500 + 6 * 1300 + 2500); };
+        });
+        await api.say(api.kid ? '程心又一次错过了。但蓝星上，有人给她留下了东西。' : '程心再一次错过了——这一次是 1890 万年。但蓝星的岩石上，有人给她留下了字。');
+      }
+    };
+  };
+
+  /* 13 石头上的字与小宇宙 647 */
+  SM.Islands.b3_647 = function (api) {
+    var H = api.H, S = api.scene; S.background = new THREE.Color(0x6a8ab8); S.fog = new THREE.Fog(0x6a8ab8, 40, 160);
+    lights(api, 1, .8, [-20, 30, 10]);
+    S.add(H.ground(0x7a8a7a, 400)); for (var i = 0; i < 30; i++) S.add(H.cone(1.5 + Math.random() * 2, 3 + Math.random() * 6, 0x5a6a5a, (Math.random() - .5) * 160, 2, -30 - Math.random() * 100, 5));
+    var stone = H.box(6, 3.2, 1.2, 0x6a6a6a, 0, 1.6, -6); S.add(stone);
+    var cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; var g = cv.getContext('2d'); var tex = new THREE.CanvasTexture(cv);
+    var face = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 2.8), H.basic(0xffffff, { map: tex, transparent: true })); face.position.set(0, 1.6, -5.38); S.add(face);
+    var lines = api.kid ? ['我们来过这里。', '我们等过你，也在这里过了一辈子。', '门后面是一个小宇宙，送给你。——云天明 艾AA'] : ['我们来过，等过。', '后来我们在这里住下，度过了一生。', '门后是小宇宙 647，这是最后一件礼物。', '——云天明、艾AA'];
+    function drawStone(n) { g.fillStyle = '#6a6a6a'; g.fillRect(0, 0, 1024, 512); g.fillStyle = '#8a8a80'; for (var i = 0; i < 400; i++) g.fillRect(Math.random() * 1024, Math.random() * 512, 3, 3); g.font = 'bold 58px "PingFang SC","Hiragino Sans GB",sans-serif'; g.textAlign = 'center'; g.fillStyle = '#f4f1ea'; g.shadowColor = '#000'; g.shadowBlur = 6; lines.forEach(function (l, i) { if (i < n) g.fillText(l, 512, 120 + i * 100); }); tex.needsUpdate = true; }
+    drawStone(0);
+    var door = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 4), H.basic(0xffffff, { transparent: true, opacity: 0, side: THREE.DoubleSide })); door.position.set(7, 2, -10); S.add(door); var doorL = new THREE.PointLight(0xffffff, 0, 30); doorL.position.set(7, 2, -8); S.add(doorL);
+    S.add(H.human(0xff7aa8, -1.5, -1, 1)); S.add(H.human(0x6a7a9a, 1.5, -1.5, 1));
+    api.camera.position.set(0, 3, 5); api.camera.lookAt(1, 1.8, -6);
+    var revealed = 0, doorOn = false;
+    return {
+      update: function (dt, t) { if (doorOn) { door.material.opacity = Math.min(.9, door.material.opacity + dt * .4); doorL.intensity = Math.min(2, doorL.intensity + dt); } },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var wipe = api.btn('擦一下'); els.opts.appendChild(wipe); var b = api.btn(api.island.interact.btn, true); b.disabled = true; els.opts.appendChild(b);
+          wipe.onclick = function () { revealed++; drawStone(revealed); els.note.textContent = lines.slice(0, revealed).join(' / '); if (revealed >= lines.length) { wipe.disabled = true; b.disabled = false; doorOn = true; } };
+          b.onclick = function () { finish(true); };
+        });
+        await api.say(api.kid ? '门后面很安静，有田地，有房子。程心和关一帆在里面住了下来。' : '小宇宙 647 是一片安静的田园。程心和关一帆在那里生活、等待——直到收到一条发给全宇宙的广播。');
+      }
+    };
+  };
+
+  /* 14 归零者与生态球 */
+  SM.Islands.b3_end = function (api) {
+    var H = api.H, S = api.scene; S.background = new THREE.Color(0xcfe0ea); S.fog = new THREE.Fog(0xcfe0ea, 40, 140);
+    lights(api, 1.1, .8, [20, 30, 10]);
+    S.add(H.ground(0x7fb86a, 300)); for (var i = 0; i < 200; i++) S.add(H.cone(.12, .8, 0xa8d090, (Math.random() - .5) * 60, .4, -5 - Math.random() * 40, 4));
+    S.add(H.box(4, 2.4, 3, 0xe8e0d0, -8, 1.2, -12)); S.add(H.cone(3.2, 1.6, 0x9a5a4a, -8, 3.2, -12, 4));
+    var door = new THREE.Group(); door.add(H.box(.3, 4.4, .3, 0x3a3a4a, -1.2, 2.2, 0)); door.add(H.box(.3, 4.4, .3, 0x3a3a4a, 1.2, 2.2, 0)); door.add(H.box(2.7, .3, .3, 0x3a3a4a, 0, 4.4, 0)); var portal = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 4.1), H.basic(0x05070f, { side: THREE.DoubleSide })); portal.position.set(0, 2.1, 0); door.add(portal); door.position.set(3, 0, -8); S.add(door);
+    var ball = H.sph(.45, 0x7fd0ff, 0, .45, -3); ball.material.transparent = true; ball.material.opacity = .75; ball.visible = false; S.add(ball); var bg = H.glow(.9, 0x9fe0ff, 0, .45, -3, 0); S.add(bg);
+    var cx = H.human(0xff7aa8, -1.2, -1, 1); S.add(cx); var gf = H.human(0x6a7a9a, 1.4, -1.4, 1); S.add(gf);
+    api.camera.position.set(0, 2.8, 5); api.camera.lookAt(1, 1.5, -8);
+    var placed = false, leaving = false;
+    return {
+      update: function (dt, t) { if (placed) bg.material.opacity = .25 + .15 * Math.sin(t * 2); if (leaving) { cx.position.lerp(new THREE.Vector3(3, 0, -8), dt * .4); gf.position.lerp(new THREE.Vector3(3.4, 0, -8.2), dt * .4); } },
+      run: async function () {
+        await api.say(api.txt(api.island.say)); api.hideSub();
+        await api.interact(api.island.interact.prompt, function (els, finish) {
+          var b = api.btn(api.island.interact.btn, true); els.opts.appendChild(b);
+          b.onclick = function () { b.disabled = true; ball.visible = true; placed = true; els.note.textContent = '一条小鱼，一点水，一点光。五公斤。'; setTimeout(function () { leaving = true; els.note.textContent = '他们走出了门。小宇宙的质量回到了大宇宙。'; }, 3000); setTimeout(function () { finish(true); }, 7500); };
+        });
+        await api.say(api.kid ? '故事讲完了。从清华园的一副眼镜，到一个小小的生态球——这就是《三体》。现在，去翻开书吧。' : '三部曲到此结束。从 1967 年清华园的一副眼镜，到时间之外的一个生态球。把字刻在石头上——然后，去读原著。');
+      }
+    };
+  };
+})();
+
+</script>
+<script>
 /* 终点产出：按部生成可保存/打印的"我的阅读地图" */
 SM.Summary = (function () {
   var W = 1800, FONT = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif';
@@ -2050,16 +2590,18 @@ SM.Summary = (function () {
     1: { nodes: { yewenjie: [420, 150], yezhetai: [160, 60], listener: [420, 330], wangmiao: [900, 150], shiqiang: [1180, 90], evans: [900, 330], sophon: [1480, 200] },
          rel: [['yezhetai', 'yewenjie', '父亲之死 → 失去信任'], ['listener', 'yewenjie', '警告"不要回答"'], ['yewenjie', 'wangmiao', '在游戏聚会中相遇'], ['yewenjie', 'evans', '共同创立ETO'], ['shiqiang', 'wangmiao', '搭档 · 古筝行动'], ['evans', 'wangmiao', '审判日号 · 被夺取信息'], ['sophon', 'wangmiao', '倒计时 · 锁死科学']] },
     2: { nodes: { luoji: [520, 180], yewenjie: [200, 70], zhuangyan: [200, 330], shiqiang: [860, 90], hines: [860, 330], zhangbeihai: [1250, 150], droplet: [1250, 340], tyler: [560, 380], reydiaz: [1520, 90] },
-         rel: [['yewenjie', 'luoji', '墓前的两条公理'], ['zhuangyan', 'luoji', '梦中情人 · 冬眠'], ['shiqiang', 'luoji', '老友 · 守护'], ['hines', 'luoji', '同为面壁者'], ['tyler', 'luoji', '同为面壁者'], ['reydiaz', 'zhangbeihai', '（同一时代）'], ['zhangbeihai', 'droplet', '末日之战前逃离'], ['luoji', 'droplet', '雪地对峙 · 威慑']] }
+         rel: [['yewenjie', 'luoji', '墓前的两条公理'], ['zhuangyan', 'luoji', '梦中情人 · 冬眠'], ['shiqiang', 'luoji', '老友 · 守护'], ['hines', 'luoji', '同为面壁者'], ['tyler', 'luoji', '同为面壁者'], ['reydiaz', 'zhangbeihai', '（同一时代）'], ['zhangbeihai', 'droplet', '末日之战前逃离'], ['luoji', 'droplet', '雪地对峙 · 威慑']] },
+    3: { nodes: { chengxin: [560, 190], yuntianming: [200, 80], wade: [200, 330], aiaa: [560, 370], luoji: [920, 80], guanyifan: [920, 330], sophonbot: [1280, 100], singer: [1280, 330], zeroer: [1560, 200] },
+         rel: [['yuntianming', 'chengxin', '一颗星 · 三个童话 · 小宇宙'], ['wade', 'chengxin', '两次被她拦下'], ['aiaa', 'chengxin', '朋友 · 星环号'], ['luoji', 'chengxin', '执剑人交接'], ['guanyifan', 'chengxin', '死线 · 小宇宙 647'], ['sophonbot', 'chengxin', '威慑失败 · 告别'], ['singer', 'aiaa', '二向箔（无意的毁灭）'], ['zeroer', 'guanyifan', '回归运动']] }
   };
-  var ENDING = { 1: '"虫子从来没有被战胜过。" —— 走完这张地图，去翻开原著吧。第二部《黑暗森林》的大门就在前方。', 2: '"给岁月以文明，而不是给文明以岁月。" —— 第二部走完了。前面那道门后，是《死神永生》。' };
-  var MIRROR = { 2: '镜像：第一部叶文洁"按住三秒，发出坐标" ↔ 第二部罗辑"握住三秒，不松手"；第一部"发射" ↔ 第二部"咒语"。' };
+  var ENDING = { 1: '"虫子从来没有被战胜过。" —— 走完这张地图，去翻开原著吧。第二部《黑暗森林》的大门就在前方。', 2: '"给岁月以文明，而不是给文明以岁月。" —— 第二部走完了。前面那道门后，是《死神永生》。', 3: '把字刻在石头上。—— 三部曲走完了。从清华园的一副眼镜，到时间之外的一个生态球。现在，去读原著吧。' };
+  var MIRROR = { 2: '镜像：第一部叶文洁"按住三秒，发出坐标" ↔ 第二部罗辑"握住三秒，不松手"；第一部"发射" ↔ 第二部"咒语"。', 3: '镜像：第一部"不要回答"的选择 ↔ 第三部程心"按不按"的选择；第一部叶文洁"发出" ↔ 第三部万有引力号"广播"；三部曲从一副眼镜开始，到一个生态球结束。' };
 
   function draw(cv, H, book) {
     book = book || 1; var B = SM.BOOKS[book - 1]; var st = SM.State.get(), kid = SM.State.isKid(); H = H || 2300; cv.width = W; cv.height = H; var g = cv.getContext('2d');
     var isl = SM.ISLANDS.filter(function (i) { return i.book === book; }); var N = isl.length;
     var ids = Object.keys(SM.CARDS).filter(function (id) { return (SM.CARDS[id].book || 1) === book; });
-    var bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, book === 2 ? '#070b12' : '#0b1024'); bg.addColorStop(1, '#05070f'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    var bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, book === 2 ? '#070b12' : book === 3 ? '#06061a' : '#0b1024'); bg.addColorStop(1, '#05070f'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
     for (var i = 0; i < 500; i++) { g.fillStyle = 'rgba(255,255,255,' + (Math.random() * .6 + .1) + ')'; g.fillRect(Math.random() * W, Math.random() * H, 1.5, 1.5); }
     if (book === 2) { for (var t = 0; t < 60; t++) { var tx = Math.random() * W, th = 60 + Math.random() * 140; g.fillStyle = 'rgba(8,12,20,.9)'; g.beginPath(); g.moveTo(tx, H); g.lineTo(tx - 18 - Math.random() * 20, H); g.lineTo(tx - 9, H - th); g.closePath(); g.fill(); } }
     g.fillStyle = '#fff'; g.font = 'bold 64px ' + FONT; g.textAlign = 'left'; g.fillText('我的《' + B.short + '》阅读地图', 80, 110);
@@ -2105,14 +2647,51 @@ SM.Summary = (function () {
     g.fillStyle = '#aab2d6'; g.font = '20px ' + FONT; g.textAlign = 'center'; g.fillText(ENDING[book] || '', W / 2, H - 60); g.textAlign = 'left';
     return cy + 140;
   }
+  /* 三部曲总览：对数时间轴（从 1967 年到时间之外）*/
+  var YEARS = { qinghua: 1967, hongan: 1969, launch: 1971, countdown: 2007, flicker: 2007.2, eras: 2007.4, computer: 2007.6, noanswer: 1979, truth: 2007.8, answer: 1979.5, judgment: 2007.9, zither: 2008, bugs: 2008.2,
+    b2_axioms: 2010, b2_wallfacer: 2011, b2_luoji: 2013, b2_wallbreaker: 2020, b2_zhang: 2024, b2_spell: 2016, b2_ravine: 2212, b2_ns: 2215, b2_droplet: 2215.3, b2_darkbattle: 2215.6, b2_spellhit: 2215.8, b2_law: 2216, b2_snow: 2216.3, b2_deterrence: 2216.6,
+    b3_star: 2010.5, b3_staircase: 2012, b3_sword: 2277, b3_fail: 2278, b3_4d: 2279, b3_triend: 2286, b3_tales: 2286.5, b3_bunker: 2300, b3_wade: 2306, b3_singer: 2360, b3_flat: 2362, b3_blue: 2650, b3_647: 19000000, b3_end: 1e10 };
+  var ERA_BANDS = [['公元', 1967, 2008], ['危机纪元', 2008, 2216], ['威慑纪元', 2216, 2278], ['广播纪元', 2278, 2295], ['掩体纪元', 2295, 2362], ['银河纪元', 2362, 19000000], ['时间之外', 19000000, 1e10]];
+  function drawTrilogy(cv, H) {
+    var st = SM.State.get(); H = H || 1500; cv.width = W; cv.height = H; var g = cv.getContext('2d');
+    var bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0b1024'); bg.addColorStop(.5, '#070b12'); bg.addColorStop(1, '#06061a'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    for (var i = 0; i < 500; i++) { g.fillStyle = 'rgba(255,255,255,' + (Math.random() * .6 + .1) + ')'; g.fillRect(Math.random() * W, Math.random() * H, 1.5, 1.5); }
+    g.fillStyle = '#fff'; g.font = 'bold 64px ' + FONT; g.fillText('《三体》三部曲总览', 80, 110); g.font = '24px ' + FONT; g.fillStyle = '#aab2d6'; g.fillText('一条河、41 座岛、从 1967 年到时间之外 · 时间轴越往右越"压缩" · 已走过 ' + SM.State.doneCount() + ' / ' + SM.ISLANDS.length + ' 站', 80, 152);
+    var x0 = 110, x1 = W - 110, yAxis = 760;
+    // 分段时间轴：左边几十年占一大块，右边几百万年只占一小块
+    var BP = [[1967, 0], [1980, .08], [2007, .16], [2030, .34], [2210, .46], [2230, .6], [2290, .72], [2370, .82], [2650, .88], [1.9e7, .95], [1e10, 1]];
+    var X = function (y) { if (y <= BP[0][0]) return x0; for (var k = 1; k < BP.length; k++) { if (y <= BP[k][0]) { var a = BP[k - 1], b = BP[k]; var f = (Math.log(y - a[0] + 1)) / (Math.log(b[0] - a[0] + 1)); if (b[0] - a[0] < 400) f = (y - a[0]) / (b[0] - a[0]); return x0 + (x1 - x0) * (a[1] + (b[1] - a[1]) * f); } } return x1; };
+    ERA_BANDS.forEach(function (e, i) { var a = X(e[1]), b = X(e[2]); g.fillStyle = i % 2 ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.07)'; g.fillRect(a, yAxis - 400, b - a, 800); g.fillStyle = '#cfd6ff'; g.font = 'bold 16px ' + FONT; g.textAlign = 'center'; g.fillText(e[0], (a + b) / 2, yAxis - 415); g.textAlign = 'left'; });
+    g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = 3; g.beginPath(); g.moveTo(x0, yAxis); g.lineTo(x1, yAxis); g.stroke();
+    [[1967, '1967'], [1979, '1979'], [2007, '2007'], [2030, '2030'], [2216, '危机纪元 208'], [2278, '威慑纪元 62'], [2362, '掩体纪元 67'], [2650, '银河纪元'], [1.9e7, '1890 万年后'], [1e10, '时间之外']].forEach(function (t) { var x = X(t[0]); g.strokeStyle = 'rgba(255,255,255,.5)'; g.lineWidth = 1; g.beginPath(); g.moveTo(x, yAxis - 8); g.lineTo(x, yAxis + 8); g.stroke(); g.fillStyle = '#8a92b8'; g.font = '13px ' + FONT; g.textAlign = 'center'; g.fillText(t[1], x, yAxis + 26); g.textAlign = 'left'; });
+    var bookCol = { 1: '#3fa9ff', 2: '#b57bff', 3: '#ff7aa8' }; var sideOf = { 1: -1, 2: 1, 3: -1 };
+    var pts = SM.ISLANDS.map(function (it) { return { it: it, x: X(YEARS[it.id] || 2007), side: sideOf[it.book] }; }).sort(function (a, b) { return a.x - b.x; });
+    [-1, 1].forEach(function (sd) { var lastEnd = -1e9, lane = 0; pts.filter(function (p) { return p.side === sd; }).forEach(function (p) { g.font = '13px ' + FONT; var w = g.measureText(p.it.title.replace('三体游戏：', '')).width + 22; if (p.x < lastEnd) { lane = (lane + 1) % 7; } else lane = 0; p.lane = lane; lastEnd = Math.max(lastEnd - 0, p.x + w); if (lane === 0) lastEnd = p.x + w; }); });
+    pts.forEach(function (p) { var ly = yAxis + p.side * (50 + p.lane * 36); var done = st.done[p.it.id]; var c = bookCol[p.it.book];
+      g.strokeStyle = 'rgba(255,255,255,.22)'; g.lineWidth = 1; g.beginPath(); g.moveTo(p.x, yAxis); g.lineTo(p.x, ly); g.stroke();
+      g.beginPath(); g.arc(p.x, ly, 8, 0, 7); g.fillStyle = done ? c : '#1c2236'; g.fill(); g.strokeStyle = c; g.lineWidth = 2; g.stroke();
+      g.fillStyle = done ? '#e8ecff' : '#6a7090'; g.font = '13px ' + FONT; g.fillText(p.it.title.replace('三体游戏：', ''), p.x + 12, ly + 4); });
+    var ly0 = yAxis + 330; SM.BOOKS.forEach(function (B, i) { g.fillStyle = bookCol[B.n]; g.fillRect(80 + i * 280, ly0, 26, 10); g.fillStyle = '#e8ecff'; g.font = '17px ' + FONT; g.fillText(B.name + '（' + SM.State.doneCount(B.n) + '/' + SM.ISLANDS.filter(function (it) { return it.book === B.n; }).length + '）', 116 + i * 280, ly0 + 11); });
+    g.fillStyle = '#aab2d6'; g.font = '17px ' + FONT; var cy = ly0 + 60;
+    cy = wrap(g, '时间轴是分段压缩的：最左边一格只有几年，最右边一格是几百万年。第一部挤在四十年里；第二部跨两百年；第三部从威慑纪元一路走到宇宙尽头。三部曲越往后，时间尺度越大，人越小。', 80, cy, W - 160, 30);
+    cy = wrap(g, '三处镜像：叶文洁"按住三秒发出" ↔ 罗辑"握住三秒不松手"；"不要回答"的选择 ↔ 程心"按不按"的选择；第一部"发射" ↔ 第二部"咒语" ↔ 第三部万有引力号"广播"。', 80, cy + 6, W - 160, 30);
+    g.fillStyle = '#aab2d6'; g.font = '20px ' + FONT; g.textAlign = 'center'; g.fillText('从清华园的一副眼镜，到时间之外的一个生态球。—— 把字刻在石头上。', W / 2, H - 60); g.textAlign = 'left';
+    return cy + 140;
+  }
   var curBook = 1;
   function show(book) {
+    if (book === 0) { var cv0 = document.getElementById('sumCanvas'); var need0 = drawTrilogy(cv0); drawTrilogy(cv0, Math.max(1500, need0)); return finishShow(0, cv0); }
     curBook = book || 1; var cv = document.getElementById('sumCanvas'); var need = draw(cv, null, curBook); draw(cv, Math.max(1400, need), curBook);
+    finishShow(curBook, cv);
+  }
+  function finishShow(book, cv) {
+    curBook = book;
     document.getElementById('summary').classList.remove('hidden');
     var tabs = document.getElementById('sumTabs'); tabs.innerHTML = '';
     SM.BOOKS.forEach(function (B) { var b = document.createElement('button'); b.className = 'bigbtn small' + (B.n === curBook ? ' on' : ''); b.textContent = B.name; b.onclick = function () { show(B.n); }; tabs.appendChild(b); });
+    if (SM.BOOKS.length > 1) { var bt = document.createElement('button'); bt.className = 'bigbtn small' + (curBook === 0 ? ' on' : ''); bt.textContent = '三部曲总览'; bt.onclick = function () { show(0); }; tabs.appendChild(bt); }
     var url = cv.toDataURL('image/png');
-    document.getElementById('dlBtn').onclick = function () { if (SM.SANDBOX) { showImage(url); return; } var a = document.createElement('a'); a.download = '我的' + SM.BOOKS[curBook - 1].short + '阅读地图.png'; a.href = url; document.body.appendChild(a); a.click(); a.remove(); };
+    document.getElementById('dlBtn').onclick = function () { if (SM.SANDBOX) { showImage(url); return; } var a = document.createElement('a'); a.download = curBook === 0 ? '三体三部曲总览.png' : '我的' + SM.BOOKS[curBook - 1].short + '阅读地图.png'; a.href = url; document.body.appendChild(a); a.click(); a.remove(); };
     document.getElementById('printBtn').onclick = function () { if (SM.SANDBOX) { showImage(url); return; } var w = window.open(''); if (!w) { showImage(url); return; } w.document.write('<title>我的阅读地图</title><img src="' + url + '" style="width:100%">'); w.document.close(); setTimeout(function () { w.print(); }, 500); };
   }
   function showImage(url) {
@@ -2212,7 +2791,7 @@ SM.Summary = (function () {
     SM.World.onLineChange(function (line) { if (SM.GUIDE.lineChange[line]) guideSay(SM.GUIDE.lineChange[line], true); });
     SM.World.onBookChange(function (b, prev) {
       curBook = b + 1; buildProgress(curBook); updateProgress();
-      if (prev !== null && prev >= 0) { if (curBook === 2) guideSay(SM.State.txt(SM.GUIDE.book2), true); else if (curBook === 1) guideSay('回到了第一部的星河。', false); }
+      if (prev !== null && prev >= 0) { var intro = SM.GUIDE['book' + curBook]; if (b > prev && intro) guideSay(SM.State.txt(intro) + (curBook === 3 && SM.State.isKid() && SM.GUIDE.kidWarn ? ' ' + SM.GUIDE.kidWarn : ''), true); else if (b < prev) guideSay('回到了' + SM.BOOKS[b].name + '。', false); }
     });
     window.addEventListener('keydown', function (e) { if (e.key === 'Enter' && nearIsl && !SM.Stage.isActive() && $('hud').offsetParent !== null && $('album').classList.contains('hidden') && $('summary').classList.contains('hidden') && $('dir').classList.contains('hidden')) enterIsland(nearIsl); });
   }
@@ -2228,7 +2807,7 @@ SM.Summary = (function () {
           $('hud').classList.remove('hidden'); SM.World.setFrozen(false); updateProgress(); $('fade').classList.remove('on');
           var idx = SM.ISLANDS.indexOf(isl2);
           if (completed) {
-            if (SM.State.bookDone(isl2.book)) guideSay(isl2.book === 1 ? SM.GUIDE.end : SM.GUIDE.book2end, true);
+            if (SM.State.bookDone(isl2.book)) guideSay(isl2.book === 1 ? SM.GUIDE.end : (SM.GUIDE['book' + isl2.book + 'end'] || SM.GUIDE.end), true);
             else if (idx < SM.ISLANDS.length - 1) { guideSay('收好了！继续沿河往前走，下一站是"' + SM.ISLANDS[idx + 1].title + '"。', true); SM.World.travelTo(isl2.u + 0.006 / NB); }
           } else guideSay('没关系，随时可以再进去。', false);
         }, 600);

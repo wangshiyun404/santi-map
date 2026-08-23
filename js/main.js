@@ -84,7 +84,7 @@
     SM.World.onLineChange(function (line) { if (SM.GUIDE.lineChange[line]) guideSay(SM.GUIDE.lineChange[line], true); });
     SM.World.onBookChange(function (b, prev) {
       curBook = b + 1; buildProgress(curBook); updateProgress();
-      if (prev !== null && prev >= 0) { if (curBook === 2) guideSay(SM.State.txt(SM.GUIDE.book2), true); else if (curBook === 1) guideSay('回到了第一部的星河。', false); }
+      if (prev !== null && prev >= 0) { var intro = SM.GUIDE['book' + curBook]; if (b > prev && intro) guideSay(SM.State.txt(intro) + (curBook === 3 && SM.State.isKid() && SM.GUIDE.kidWarn ? ' ' + SM.GUIDE.kidWarn : ''), true); else if (b < prev) guideSay('回到了' + SM.BOOKS[b].name + '。', false); }
     });
     window.addEventListener('keydown', function (e) { if (e.key === 'Enter' && nearIsl && !SM.Stage.isActive() && $('hud').offsetParent !== null && $('album').classList.contains('hidden') && $('summary').classList.contains('hidden') && $('dir').classList.contains('hidden')) enterIsland(nearIsl); });
   }
@@ -100,7 +100,7 @@
           $('hud').classList.remove('hidden'); SM.World.setFrozen(false); updateProgress(); $('fade').classList.remove('on');
           var idx = SM.ISLANDS.indexOf(isl2);
           if (completed) {
-            if (SM.State.bookDone(isl2.book)) guideSay(isl2.book === 1 ? SM.GUIDE.end : SM.GUIDE.book2end, true);
+            if (SM.State.bookDone(isl2.book)) guideSay(isl2.book === 1 ? SM.GUIDE.end : (SM.GUIDE['book' + isl2.book + 'end'] || SM.GUIDE.end), true);
             else if (idx < SM.ISLANDS.length - 1) { guideSay('收好了！继续沿河往前走，下一站是"' + SM.ISLANDS[idx + 1].title + '"。', true); SM.World.travelTo(isl2.u + 0.006 / NB); }
           } else guideSay('没关系，随时可以再进去。', false);
         }, 600);
