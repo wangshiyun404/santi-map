@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三体·阅读地图</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<!-- 首页 -->
+<div id="title">
+  <h1>三体</h1>
+  <h2>阅 读 地 图</h2>
+  <p class="sub">一条可以走进去的星河。沿河前行，走过 13 座岛，用半小时看懂《三体》第一部的三条故事线：谁是谁、发生了什么、为什么。没有失败，不会迷路，随时可以回头。</p>
+  <div class="modes">
+    <button class="modebtn" data-mode="kid"><b>小学生模式</b><span>字少一点、讲慢一点，有小智子全程陪着走。适合五六年级起。</span></button>
+    <button class="modebtn" data-mode="reader"><b>读者模式</b><span>完整旁白，每站附"想一想"和对应原著章节，方便回头翻书。</span></button>
+  </div>
+  <p class="cont hidden" id="contRow">上次走到第 <b id="contN">1</b> 站 · <button id="contBtn">继续上次的旅程</button> · <button id="resetBtn">重新开始</button></p>
+  <div class="legend">
+    <span><i style="background:#ff5a3c"></i>红岸过去线</span>
+    <span><i style="background:#3fa9ff"></i>汪淼现在线</span>
+    <span><i style="background:#ffc94a"></i>三体游戏线</span>
+    <span><i style="background:#f4f1ff"></i>汇合</span>
+  </div>
+  <p class="foot">根据刘慈欣《三体》第一部情节自写转述 · 仅供阅读辅助与课堂使用</p>
+</div>
+
+<!-- 星河 HUD -->
+<div id="hud" class="hidden">
+  <div id="progress">
+    <div class="rows"></div>
+    <div class="cap">第 <b id="stationNo">1</b> / 13 站 · <span id="stationName"></span></div>
+  </div>
+  <div id="topRight">
+    <button class="bigbtn small" id="albumBtn">阅读地图册<span id="albumBadge">0</span></button>
+    <button class="bigbtn small" id="muteBtn">🔊 旁白</button>
+    <button class="bigbtn small" id="modeBtn">切换模式</button>
+    <button class="bigbtn small" id="homeBtn">首页</button>
+  </div>
+  <div id="guide">
+    <div class="avatar"></div>
+    <div class="bubble"><small>小智子</small><span id="guideTxt"></span></div>
+  </div>
+  <div id="hint">↑ / W 前进 · ↓ / S 后退 · 点击地面也可以走 · 到岛边按"进入"</div>
+  <div id="controls">
+    <button class="bigbtn primary hidden" id="enterBtn">进 入</button>
+    <button class="bigbtn primary hidden" id="finishBtn">生成我的阅读地图</button>
+    <div class="row">
+      <button class="bigbtn" id="backBtn">◀ 后退</button>
+      <button class="bigbtn" id="fwdBtn">前进 ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- 岛内 UI -->
+<div id="stageUI" class="hidden">
+  <div id="stageTitle"><div class="n">第 <span id="stN"></span> 站</div><h3><i id="stDot"></i><span id="stTitle"></span></h3><div class="y" id="stYear"></div></div>
+  <button class="bigbtn small" id="exitBtn">返回星河</button>
+  <div id="subtitle" class="hidden">
+    <div class="txt" id="subTxt"></div>
+    <div class="bar"><span class="l" id="subL">旁白</span><span class="r"><button class="bigbtn small" id="replayBtn">重听</button><button class="bigbtn small primary" id="nextBtn">继续 ▶</button></span></div>
+  </div>
+  <div id="interact" class="hidden">
+    <div class="prompt" id="intPrompt"></div>
+    <div class="body" id="intBody"></div>
+    <div class="note" id="intNote"></div>
+    <div class="opts" id="intOpts"></div>
+  </div>
+  <div id="cardPop" class="hidden"></div>
+  <div id="thinkBox" class="hidden">
+    <h4>想 一 想</h4>
+    <div class="q" id="thinkQ"></div>
+    <div class="ref" id="thinkRef"></div>
+    <textarea id="thinkAns" placeholder="可以把你的想法写在这里（会出现在你的阅读地图上）"></textarea>
+    <div class="bar"><button class="bigbtn small" id="thinkSkip">跳过</button><button class="bigbtn small primary" id="thinkOk">记下来，返回星河</button></div>
+  </div>
+</div>
+
+<!-- 地图册 -->
+<div id="album" class="hidden">
+  <button class="bigbtn small close" id="albumClose">关闭</button>
+  <h2>我的阅读地图册</h2>
+  <p class="sub">已收集 <b id="albumCount">0</b> / <span id="albumTotal"></span> 张线索卡</p>
+  <div id="albumBody"></div>
+</div>
+
+<!-- 终点总图 -->
+<div id="summary" class="hidden">
+  <div class="tools">
+    <button class="bigbtn small primary" id="dlBtn">保存为图片</button>
+    <button class="bigbtn small" id="printBtn">打印</button>
+    <button class="bigbtn small" id="sumClose">返回星河</button>
+  </div>
+  <canvas id="sumCanvas"></canvas>
+</div>
+
+<div id="fade"></div>
+
+<script src="three.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/narration.js"></script>
+<script src="js/state.js"></script>
+<script src="js/world.js"></script>
+<script src="js/stage.js"></script>
+<script src="js/islands.js"></script>
+<script src="js/summary.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
