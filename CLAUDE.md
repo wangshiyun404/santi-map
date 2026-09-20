@@ -17,7 +17,7 @@
 3. **内容红线**：全部旁白是自写的情节转述，**不摘抄原文**；仅保留极少数标志性短句（如"不要回答！"）加引号引用。
 4. **适龄红线**：叶哲泰之死只用"一副眼镜"表现；古筝行动只表现船体被无形的线分开、不表现人；结尾落在"虫子从来没有被战胜过"的希望上，不以压迫感收尾。
 5. **站点顺序 = 原著阅读顺序**（红红红蓝蓝金金红金红蓝蓝白），三色河道交织后在第 13 站汇合——这是让读者"看懂结构"的核心手段，不要打乱。
-6. **版权**：《三体》IP 管理严格。课堂/家庭/校内使用没问题；**不要**以"三体"之名公开部署到 GitHub Pages / 精课云等公网。
+6. **版权**：《三体》IP 管理严格。本项目定位为**非官方、非商业的阅读辅助粉丝作品**：全部旁白为自写情节转述、不摘抄原文。2026-09-21 起经王老师决定公开部署于 GitHub Pages（附免责声明）；如权利方提出异议，立即下线公开站点、仓库转回私有。不做任何商业化。
 
 ## 3. 技术约定
 - 纯前端，**零外网依赖**：`three.min.js` 为 r128 UMD 版（全局 `THREE`），本地引入；原生 JS，不用框架、不用 ES module、不用打包器。
@@ -72,9 +72,9 @@ python3 -m http.server 8975 --directory .     # 然后打开 http://localhost:89
 python3 build.py          # 产出 dist/三体阅读地图.html（双击即玩）和 dist/artifact.html
 ```
 - 单文件版（约 32MB，人声原始音质内嵌）可直接微信/AirDrop 发人，file:// 打开即可；Artifact 版人声转码到 20kbps 以满足 16MB 上限。
-- Artifact（同一 Claude 账号登录即可玩，私有）：https://claude.ai/code/artifact/5e48786d-7e5e-4c13-8e58-f14a0372432f
-  更新方法：在 Claude Code 里用 Artifact 工具、传 `url` 为上面地址、文件为 `dist/artifact.html` 重新发布即可保持同一链接。
-- 源码仓库：GitHub 私有仓库 `wangshiyun404/santi-map`（见 README）。
+- 在线试玩（GitHub Pages，2026-09-21 起）：https://wangshiyun404.github.io/santi-map/
+- Artifact（同一 Claude 账号登录即可玩，私有链接见本地会话记录）：用 Artifact 工具传原 `url` + `dist/artifact.html` 重新发布即可保持同一链接。
+- 源码仓库：`wangshiyun404/santi-map`（2026-09-21 起公开）。
 
 ## 7. 加一座新岛 / 加一部的步骤
 加一部：新建 `dataN.js`（push `SM.BOOKS` 一项 {n, name, short, lines, theme, gate}、新 LINES、卡、岛（带 book:N）、ERAS/TUNNELS），新建 `islandsN.js`，world.js 的 `diorama()` 加微缩景观、`THEMES` 加主题，summary.js 的 `PEOPLE/ENDING` 加该部；index.html 引入脚本。其余（河道、门、目录、进度、地图册）自动按 BOOKS 生成。
